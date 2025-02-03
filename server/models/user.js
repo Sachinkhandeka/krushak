@@ -1,15 +1,21 @@
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
-    firstName : {
+    displayName : {
         type : String,
         required : true,
         trim : true,
+        index : true,
     },
-    lastName : {
+    username : {
         type : String,
         required : true,
         trim : true,
+        unique : true,
+        lowercase : true,
+        index : true,
     },
     email : {
         type : String,
@@ -19,9 +25,16 @@ const userSchema = new mongoose.Schema({
         lowercase : true,
         match : [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
-    password : {
+    avatar : {
         type : String,
         required : true,
+    },
+    coverImage : {
+        type : String,
+    },
+    password : {
+        type : String,
+        required : [true, 'Password is required'],
         minlength : 8
     },
     phone : {
@@ -33,26 +46,76 @@ const userSchema = new mongoose.Schema({
         enum : ['Admin', 'Farmer', 'EquipmentOwner'],
         required : true,
     },
+    rentalHistory: [
+        {
+            equipmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' },
+            rentedOn: { type: Date, default: Date.now },
+            rentalPeriod: { type: String },
+            returnDate: { type: Date },
+            rentalStatus: { type: String, enum: ['Active', 'Completed', 'Cancelled'], default: 'Active' },
+            pricePaid: { type: Number }
+        }
+    ],
+    recentlyViewedEquipment: [
+        {
+            equipmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' },
+            viewedOn: { type: Date, default: Date.now }
+        }
+    ],
+    favorites: [
+        { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Equipment' 
+        }
+    ],
     refreshToken : {
         type : String,
-        required : true,
-    },
-    lastLogin: {
-        type: Date,
-    },
-    lastLoginIP: {
-        type: String,
-    },
-    loginDevices: [
-        {
-            device: String, // e.g., "Desktop", "Mobile", "Tablet"
-            browser: String, // e.g., "Chrome", "Firefox", "Safari"
-            os: String, // e.g., "Windows", "macOS", "iOS", "Android"
-            ipAddress: String,
-            lastAccessed: Date,
-        },
-    ],
+    }
 }, { timestamps : true });
+
+//function to hash password before saving into DB
+userSchema.pre("save", async function (next) {
+    if(this.isModified("password")) {
+        this.password = await bcryptjs.hash(this.password , 10);
+        next();
+    }
+    next();
+});
+
+//method to check if password is correct or not
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcryptjs.compare(password, this.password);
+}
+
+//method to generate access token 
+userSchema.methods.generateAccessToken = function () {
+    return jwt.sign(
+        {
+            _id : this._id,
+            username : this.username,
+            displayName : this.displayName,
+            role : this.role,
+        },
+        process.env.ACCESS_TOKEN_SECRETE,
+        {
+            expiresIn : process.env.ACCESS_TOKEN_EXPIRY
+        }
+    );
+}
+
+//method to generate refresh token 
+userSchema.methods.generateRefreshToken = function () {
+    return jwt.sign(
+        {
+            _id : this._id,
+            role : this.role,
+        },
+        process.env.REFRESH_TOKEN_SECRETE,
+        {
+            expiresIn : process.env.REFRESH_TOKEN_EXPIRY
+        }
+    );
+}
 
 const User = mongoose.model("User", userSchema);
 

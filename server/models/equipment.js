@@ -1,5 +1,5 @@
-const { required } = require("joi");
 const mongoose = require("mongoose");
+const mongooseAggrigatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const equipmentSchema = new mongoose.Schema({
     name : {
@@ -15,6 +15,7 @@ const equipmentSchema = new mongoose.Schema({
         type : String,
         enum : [
             'Tractor',
+            'Water Tanker',
             'Plough',
             'Seed Drill',
             'Cultivator',
@@ -67,18 +68,20 @@ const equipmentSchema = new mongoose.Schema({
     video : {
         type : String,
     },
-    pricePerHour : {
-        type : Number,
-        min : 1,
-    },
-    pricePerDay : {
-        type : Number,
-        min : 1,
-    },
-    pricePerWeek : {
-        type : Number,
-        min : 1
-    },
+    pricing : [
+        {
+            unit: {
+                type: String,
+                enum: ['hour', 'day', 'week', 'quantity', 'other'], 
+                required: true,
+            },
+            price: {
+                type: Number,
+                min: 1,
+                required: true,
+            },
+        }
+    ],
     availability : {
         type : Boolean,
         default : true,
@@ -135,6 +138,8 @@ const equipmentSchema = new mongoose.Schema({
         ref : 'Review',
     }],
 },{ timestamps : true });
+
+equipmentSchema.plugin(mongooseAggrigatePaginate);
 
 const Equipment = mongoose.model("Equipment", equipmentSchema);
 
