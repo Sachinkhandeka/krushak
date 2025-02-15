@@ -4,6 +4,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const user = require("../controllers/user.controller.js");
 const validateUserSchema = require("../middlewares/user.middleware.js");
 const upload = require("../middlewares/multer.middleware.js");
+const verifyJwt = require("../middlewares/auth.middleware.js");
 
 // register user route
 router.post(
@@ -26,6 +27,14 @@ router.post(
 router.post(
     "/login",
     wrapAsync( user.loginUser ),
+);
+
+// secured routed (requires access token verification)
+// logout user
+router.post(
+    "/logout",
+    verifyJwt,
+    wrapAsync(user.logoutUser),
 );
 
 // 	Get user profile (Protected)

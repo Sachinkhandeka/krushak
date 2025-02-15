@@ -3,6 +3,27 @@ const ApiResponse = require("../utils/apiResponse.js");
 const User = require("../models/user.js");
 const uploadOnCloudinary = require("../utils/cloudinary.js");
 
+// generate access and refresh tokens method
+const generateAccessAndRefreshToken = async ( userId )=> {
+    try {
+        const user = await User.findById(userId);
+
+        if(!user) { 
+            throw new ApiError(404, "User with given id not found");
+        }
+
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
+
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave : false });
+
+        return { accessToken, refreshToken }
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while generating refresh and access tokens");
+    }
+}
+
 //register user controller
 module.exports.registerUser = async ( req , res )=> {
     const { userData } = req.body ; 
@@ -59,10 +80,79 @@ module.exports.registerUser = async ( req , res )=> {
 
 //login user controller
 module.exports.loginUser = async ( req , res )=> {
-    console.log("login user route on the mark!");
-    res.status(200).json({
-        message : "Ok from login!"
-    });
+    const { username, email, password } = req.body ; 
+
+    // step-1 : check username or email 
+    if(!( username || email )) {
+        throw new ApiError(400, "username or password is required")
+    }
+    // step-2 : find the user
+    const user = await User.findOne({ $or : [{ username }, { email }] });
+
+    if(!user) {
+        throw new ApiError(404, "User with given username or email not exists");
+    }
+    // step-3 : password check
+    const isPassValid = await user.isPasswordCorrect(password);
+
+    if(!isPassValid) {
+        throw new ApiError(401, "Invalid user credentials");
+    }
+    // step-4 : generate access & refresh tokens
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+
+    // step-5 : send tokens - cookies and response
+    const loggedinUser = await User.findById(user._id).select("-password -refreshToken");
+
+    const options = {
+        httpOnly : true,
+        secure : true,
+    }
+
+    return res.status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(200,
+            {
+                user : loggedinUser,
+                accessToken,refreshToken,
+            },
+            "User Logged In Successfully"
+        )
+    )
+
+}
+
+// logout user (protected)
+module.exports.logoutUser = async ( req, res )=> {
+    const user = req.user; 
+
+    if(!user) {
+        throw new ApiError(401, "Could not proccess logout as user not found");
+    }
+
+    await User.findByIdAndUpdate(
+        user._id,
+        {
+            $set : {
+                refreshToken : undefined,
+            },
+        },
+        {
+            new : true
+        }
+    );
+
+    const options = {
+        httpOnly : true,
+        secure : true,
+    }
+
+    res.status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json( new ApiResponse(200, {}, "User logged Out Successfully") );
 }
 
 // 	Get user profile (Protected)
