@@ -4,6 +4,9 @@ const path = require("path");
 const cors = require("cors");
 const ApiError = require("./utils/apiError.js");
 
+// routes requiring
+const userRouter = require("./routes/user.routes.js");
+
 
 const app = express();
 
@@ -17,9 +20,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // routes
-app.get("/", (req, res)=> {
-    res.send("Express App setUp successfully.");
-});
+app.use( "/api/v1/users", userRouter );
 
 // static folder for client side pages
 app.use(express.static((path.join( __dirname, "../client/dist" ))));
@@ -33,7 +34,7 @@ app.use( "*", (req , res)=> {
 // error handling middleware
 app.use((err, req, res, next)=> {
     if( err instanceof ApiError ) {
-        res.status(err.statusCode).json({
+        return res.status(err.statusCode).json({
             success : err.success || false,
             message : err.message,
             errors : err.errors || [],

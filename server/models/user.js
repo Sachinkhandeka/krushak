@@ -27,7 +27,6 @@ const userSchema = new mongoose.Schema({
     },
     avatar : {
         type : String,
-        required : true,
     },
     coverImage : {
         type : String,
@@ -35,7 +34,7 @@ const userSchema = new mongoose.Schema({
     password : {
         type : String,
         required : [true, 'Password is required'],
-        minlength : 8
+        minlength : 6
     },
     phone : {
         type : String,
@@ -44,7 +43,6 @@ const userSchema = new mongoose.Schema({
     role : {
         type : String,
         enum : ['Admin', 'Farmer', 'EquipmentOwner'],
-        required : true,
     },
     rentalHistory: [
         {
@@ -96,7 +94,7 @@ userSchema.methods.generateAccessToken = function () {
             displayName : this.displayName,
             role : this.role,
         },
-        process.env.ACCESS_TOKEN_SECRETE,
+        process.env.ACCESS_TOKEN_SECRET,
         {
             expiresIn : process.env.ACCESS_TOKEN_EXPIRY
         }
@@ -110,7 +108,7 @@ userSchema.methods.generateRefreshToken = function () {
             _id : this._id,
             role : this.role,
         },
-        process.env.REFRESH_TOKEN_SECRETE,
+        process.env.REFRESH_TOKEN_SECRET,
         {
             expiresIn : process.env.REFRESH_TOKEN_EXPIRY
         }
