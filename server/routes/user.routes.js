@@ -37,6 +37,12 @@ router.post(
     wrapAsync(user.logoutUser),
 );
 
+// refresh user access token 
+router.post(
+    "/refresh-token",
+    wrapAsync(user.refreshAccessToken),
+);
+
 // 	Get user profile (Protected)
 router.get(
     "/profile",

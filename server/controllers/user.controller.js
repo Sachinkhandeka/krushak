@@ -2,6 +2,7 @@ const ApiError = require("../utils/apiError.js");
 const ApiResponse = require("../utils/apiResponse.js");
 const User = require("../models/user.js");
 const uploadOnCloudinary = require("../utils/cloudinary.js");
+const jwt = require("jsonwebtoken");
 
 // generate access and refresh tokens method
 const generateAccessAndRefreshToken = async ( userId )=> {
@@ -153,6 +154,52 @@ module.exports.logoutUser = async ( req, res )=> {
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json( new ApiResponse(200, {}, "User logged Out Successfully") );
+}
+
+// refresh Access token route
+module.exports.refreshAccessToken = async ( req, res )=> {
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken ; 
+
+    if(!incomingRefreshToken) {
+        throw new ApiError(401, "Unauthorized user request");
+    }
+
+    try {
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+    
+        const user = await User.findById(decodedToken?._id);
+    
+        if(!user) {
+            throw new ApiError(401, "Invalid user refresh token");
+        }
+    
+        // check incoming refresh token and DB refresh token
+        if(incomingRefreshToken !== user?.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired or used");
+        }
+    
+        const options = {
+            httpOnly : true,
+            secure : true,
+        }
+        // generate new access and refresh tokens
+        const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+    
+        res.status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(
+                200,
+                {
+                    accessToken, refreshToken
+                },
+                "User access token refreshed successfully",
+            )
+        );
+    } catch (error) {
+        throw new ApiError(401, "Invalid user refresh token");
+    }
 }
 
 // 	Get user profile (Protected)
