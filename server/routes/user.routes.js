@@ -46,24 +46,32 @@ router.post(
 // 	Get user profile (Protected)
 router.get(
     "/profile",
+    verifyJwt,
     wrapAsync( user.getUserProfile ),
+);
+
+// change current password
+router.post(
+    "/profile/reset-password",
+    verifyJwt,
+    wrapAsync(user.changeCurrentPassword),
 );
 
 // Update user profile (Protected)
 router.put(
-    "/:id",
+    "/profile/:id",
     wrapAsync( user.updateUserProfile ),
 );
 
 // Delete user account
 router.delete(
-    "/:id",
+    "/profile/:id",
     wrapAsync( user.deleteUserProfile ),
 );
 
 // Get all users (Admin only)
 router.get(
-    "/",
+    "/admin/users",
     wrapAsync( user.getAllUsers ),
 );
 

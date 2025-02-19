@@ -202,12 +202,59 @@ module.exports.refreshAccessToken = async ( req, res )=> {
     }
 }
 
+// change user password
+module.exports.changeCurrentPassword = async ( req, res )=> {
+    const { oldPassword, newPassword, confirmPassword } = req.body; 
+
+    if( !oldPassword && !newPassword && !confirmPassword ) {
+        throw new ApiError(400, "Please provide old, new and confirm passwords to proceed");
+    }
+    
+    const user = await User.findById(req.user?._id);
+
+    if(!user) {
+        throw new ApiError(401, "Unauthorized user request");
+    }
+
+    if( newPassword !== confirmPassword ) {
+        throw new ApiError(400, "New password and confirm password do not match");
+    }
+
+    const isPassValid = await user.isPasswordCorrect(oldPassword);
+
+    if(!isPassValid) {
+        throw new ApiError(400, "Invalid current user password");
+    }
+
+    const isSamePassword = await user.isPasswordCorrect(newPassword);
+
+    if(isSamePassword) {
+        throw new ApiError(400, "New password cannot be the same as the old password");
+    }
+
+    user.password = newPassword;
+    await user.save({ validateBeforeSave : false });
+
+    return res.status(200)
+    .json(
+        new ApiResponse(
+            200,
+            {},
+            "User password changed successfully"
+        )
+    );
+}
+
 // 	Get user profile (Protected)
 module.exports.getUserProfile = async ( req , res )=> {
-    console.log("Get user Rounte on mark!");
-    res.status(200).json({
-        message : "Ok from getUserProfile!"
-    });
+    return res.status(200)
+    .json(
+        new ApiResponse(
+            200,
+            req.user,
+            "Logged in user fetched successfully"
+        )
+    );
 }
 
 // Update user profile (Protected)
