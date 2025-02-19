@@ -26,6 +26,10 @@ const bookingSchema = new mongoose.Schema({
             enum : ["Cash", "Online"],
             default : "Cash",
         },
+        transactionId: {
+            type: String, 
+            default: null,
+        },
         status : {
             type : String,
             enum : ["Pending", "Paid", "Cancelled"],
@@ -36,6 +40,34 @@ const bookingSchema = new mongoose.Schema({
         type: String,
         enum: ["Pending", "Approved", "Completed", "Cancelled"],
         default: "Pending",
+    },
+    cancellation: {
+        isCancelled: {
+            type: Boolean,
+            default: false,
+        },
+        cancelledBy: {
+            type: mongoose.Schema.Types.ObjectId, // Who cancelled (User / equipment Owner)
+            ref: "User",
+            default: null,
+        },
+        reason: {
+            type: String,
+            default: "",
+        },
+        refundStatus: {
+            type: String,
+            enum: ["Not Initiated", "In Progress", "Completed", "No Refund"],
+            default: "Not Initiated",
+        },
+        refundAmount: {
+            type: Number,
+            default: 0,
+        },
+        cancelledAt: {
+            type: Date,
+            default: null,
+        },
     }
 });
 
