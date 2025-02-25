@@ -47,7 +47,7 @@ const bookingSchema = new mongoose.Schema({
             default: false,
         },
         cancelledBy: {
-            type: mongoose.Schema.Types.ObjectId, // Who cancelled (User / equipment Owner)
+            type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             default: null,
         },

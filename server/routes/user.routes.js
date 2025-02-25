@@ -43,6 +43,18 @@ router.post(
     wrapAsync(user.refreshAccessToken),
 );
 
+// forgot password
+router.post(
+    "/forgot-password",
+    wrapAsync(user.forgotUserPassword),
+);
+
+//reset password
+router.post(
+    "/reset-password/:token",
+    wrapAsync(user.resetUserPassword),
+);
+
 // 	Get user profile (Protected)
 router.get(
     "/profile",
@@ -52,14 +64,31 @@ router.get(
 
 // change current password
 router.post(
-    "/profile/reset-password",
+    "/profile/change-password",
     verifyJwt,
     wrapAsync(user.changeCurrentPassword),
+);
+
+// Update User Avatar (Protected)
+router.put(
+    "/profile/update-avatar",
+    verifyJwt,
+    upload.single("avatar"),
+    wrapAsync(user.updateUserAvatar),
+);
+
+// Update User Cover Image (Protected)
+router.put(
+    "/profile/update-cover",
+    verifyJwt,
+    upload.single("coverImage"),
+    wrapAsync(user.updateUserCoverImage)
 );
 
 // Update user profile (Protected)
 router.put(
     "/profile/:id",
+    verifyJwt,
     wrapAsync( user.updateUserProfile ),
 );
 
