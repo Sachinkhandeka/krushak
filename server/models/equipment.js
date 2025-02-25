@@ -2,77 +2,79 @@ const mongoose = require("mongoose");
 const mongooseAggrigatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const equipmentSchema = new mongoose.Schema({
-    name : {
-        type : String,
-        required : true,
-        trim : true,
+    name: {
+        type: String,
+        required: true,
+        trim: true,
     },
-    description : {
-        type : String,
-        required : true,
+    description: {
+        type: String,
+        required: true,
     },
-    type : {
-        type : String,
-        enum : [
-            'Tractor',
-            'Water Tanker',
-            'Plough',
-            'Seed Drill',
-            'Cultivator',
-            'Rotavator',
-            'Harvester',
-            'Sprayer',
-            'Weeder',
-            'Irrigation Equipment',
-            'Chaff Cutter',
-            'Thresher',
-            'Balers',
-            'Power Tiller',
-            'Combine Harvester',
-            'Soil Testing Kit',
-            'Post-Harvest Equipment',
-            'Greenhouse Equipment',
-            'Water Pumps',
-            'Milking Machine',
-            'Grain Storage Bin',
-            'Crop Protection Drones',
-            'Seed Treatment Machine',
-            'Transplanter',
-            'Precision Farming Tools',
-            'Fertilizer Spreader',
-            'Crop Monitoring Sensors',
-            'Bio-Mechanical Pest Control Tools'
+    category: { 
+        type: String,
+        enum: [
+            'Tractors & Power Equipment (ટ્રેક્ટર અને પાવર ઉપકરણો)',
+            'Soil Preparation Equipment (જમીન તૈયારી સાધનો)',
+            'Planting & Seeding Equipment (વાવણી અને બીજ રોપવાના સાધનો)',
+            'Irrigation Equipment (સિંચાઈ સાધનો)',
+            'Harvesting Equipment (કાપણી સાધનો)',
+            'Post-Harvest & Processing Equipment (કાપણી પછી અને પ્રક્રિયા સાધનો)',
+            'Other Agricultural Equipment (અન્ય કૃષિ સાધનો)',
         ],
-        required : true,
+        required: true,
     },
-    model : {
-        type : String,
-        isLatestModel : {
-            type : Boolean,
+    type: {
+        type: String,
+        enum: [
+            'Tractor (ટ્રેક્ટર)',
+            'Power Tiller (પાવર ટિલર)',
+            'Water Tanker (પાણીનો ટેન્કર)',
+            'Plough (હળ)',
+            'Seed Drill (બીજ ડ્રિલ)',
+            'Cultivator (ખેતર ખેડવા માટેનું સાધન)',
+            'Rotavator (રોટાવેટર)',
+            'Harvester (કાપણી મશીન)',
+            'Combine Harvester (કૉમ્બાઇન હાર્વેસ્ટર)',
+            'Sprayer (સ્પ્રેયર)',
+            'Weeder (વીડર)',
+            'Irrigation Equipment (સિંચાઈ સાધનો)',
+            'Chaff Cutter (ચાફ કટર)',
+            'Thresher (થ્રેશર)',
+            'Balers (બેલર્સ)',
+            'Soil Testing Kit (માટી પરીક્ષણ કીટ)',
+            'Post-Harvest Equipment (કાપણી પછીના સાધનો)',
+        ],
+        required: true,
+    },
+    model: {
+        type: String,
+        isLatestModel: {
+            type: Boolean,
         }
     },
-    year : {
-        type : Number,
-        min : 1900,
-        max : new Date().getFullYear(),
+    year: {
+        type: Number,
+        min: 1900,
+        max: new Date().getFullYear(),
     },
-    condition : {
-        type : String,
-        enum : ['Excellent', 'Good', 'Fair', 'Poor'],
+    condition: {
+        type: String,
+        enum: ['Excellent (ઉત્તમ)', 'Good (સારો)', 'Fair (મધ્યમ)', 'Poor (નબળો)'],
     },
-    images : [
+    images: [
         {
-            type : String,
+            type: String,
         }
     ],
-    video : {
-        type : String,
+    video: {
+        type: String,
     },
-    pricing : [
+    pricing: [
         {
             unit: {
                 type: String,
-                enum: ['hour', 'day', 'week', 'quantity', 'other'], 
+                enum: ['hour (કલાક)', 'day (દિવસ)', 'week (અઠવાડિયું)', 'quantity (જથ્થો)', 'other (અન્ય)'], 
                 required: true,
             },
             price: {
@@ -82,14 +84,14 @@ const equipmentSchema = new mongoose.Schema({
             },
         }
     ],
-    availability : {
-        type : Boolean,
-        default : true,
+    availability: {
+        type: Boolean,
+        default: true,
     },
-    owner : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'User',
-        required : true,
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
     availabilityArea: [
         {
@@ -122,8 +124,8 @@ const equipmentSchema = new mongoose.Schema({
         },
         type: {
             type: String,
-            enum: ['Flat', 'Percentage'],
-            default: 'Flat',
+            enum: ['Flat (સિદ્ધાંત)', 'Percentage (ટકાવારી)'],
+            default: 'Flat (સિદ્ધાંત)',
         },
         validTill: {
             type: Date,
@@ -133,14 +135,14 @@ const equipmentSchema = new mongoose.Schema({
             default: false,
         },
     },
-    reviews : [{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'Review',
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Review',
     }],
-},{ timestamps : true });
+}, { timestamps: true });
 
 equipmentSchema.plugin(mongooseAggrigatePaginate);
 
 const Equipment = mongoose.model("Equipment", equipmentSchema);
 
-module.exports = Equipment ; 
+module.exports = Equipment;
