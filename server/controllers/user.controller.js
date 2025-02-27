@@ -60,18 +60,23 @@ module.exports.registerUser = async ( req , res )=> {
     const avatar = avatarLocalPath ? await uploadOnCloudinary(avatarLocalPath) : undefined;
     const coverImage = coverImageLocalPath ? await uploadOnCloudinary(coverImageLocalPath) : undefined ; 
 
-    // step6 : create user object - create entry in DB
-    const user = await User.create({
-        displayName : userData.displayName,
-        username : userData.username,
-        email : userData.email,
-        password : userData.password,
-        phone : userData.phone,
-        role : userData.role,
-        avatar : avatar?.url || "",
-        coverImage : coverImage?.url || ""
-    });
-    await user.save();
+    let user ; 
+    try {
+        // step6 : create user object - create entry in DB
+        user = await User.create({
+            displayName : userData.displayName,
+            username : userData.username,
+            email : userData.email,
+            password : userData.password,
+            phone : userData.phone,
+            role : userData.role,
+            avatar : avatar?.secure_url || "",
+            coverImage : coverImage?.secure_url || ""
+        });
+        await user.save();
+    } catch (error) {
+        throw new ApiError(400, error.message);
+    }
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken");
 
@@ -353,7 +358,7 @@ module.exports.updateUserAvatar = async ( req, res )=> {
         req.user?._id,
         {
             $set : {
-                avatar : avatar?.url,
+                avatar : avatar?.secure_url,
             }
         },
         {
@@ -389,7 +394,7 @@ module.exports.updateUserCoverImage = async ( req , res )=> {
         req.user?._id,
         {
             $set : {
-                coverImage : coverImage?.url,
+                coverImage : coverImage?.secure_url,
             }
         },
         {

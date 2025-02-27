@@ -4,12 +4,17 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const verifyJwt = require("../middlewares/auth.middleware.js");
 const equipment = require("../controllers/equipment.controller.js");
 const validateEquipmentSchema = require("../middlewares/equipment.middleware.js");
+const upload = require("../middlewares/multer.middleware.js");
 
 // post a equipment for rent
 router.post(
     "/",
     verifyJwt,
     validateEquipmentSchema,
+    upload.fields([
+        { name : "images" , maxCount : 5 },
+        { name : "video" , maxCount : 1 }
+    ]),
     wrapAsync(equipment.rentEquipment),
 );
 

@@ -48,7 +48,7 @@ const equipmentSchema = new mongoose.Schema({
         required: true,
     },
     model: {
-        type: String,
+        modelType : { type: String },
         isLatestModel: {
             type: Boolean,
         }
