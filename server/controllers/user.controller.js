@@ -1,7 +1,7 @@
 const ApiError = require("../utils/apiError.js");
 const ApiResponse = require("../utils/apiResponse.js");
 const User = require("../models/user.js");
-const uploadOnCloudinary = require("../utils/cloudinary.js");
+const { uploadOnCloudinary, removeFromCloudinary } = require("../utils/cloudinary.js");
 const jwt = require("jsonwebtoken");
 const transporter = require("../config/nodeMailer.js");
 const profileUpdateMail = require("../emailTemplates/profileUpdateMail.js");
@@ -348,6 +348,12 @@ module.exports.updateUserAvatar = async ( req, res )=> {
         throw new ApiError(400, "Avatar file is missing");
     }
 
+    if(!req.user) {
+        throw new ApiError(400, "Logged in user not found");
+    }
+
+    await removeFromCloudinary(req.user.avatar);
+
     const avatar = await uploadOnCloudinary(avatarLocalPath);
 
     if(!avatar) {
@@ -383,6 +389,12 @@ module.exports.updateUserCoverImage = async ( req , res )=> {
     if(!coverImageLocalPath) {
         throw new ApiError(400, "Cover image file is missing");
     }
+
+    if(!req.user) {
+        throw new ApiError(400, "Logged in user not found");
+    }
+
+    await removeFromCloudinary(req.user.coverImage);
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 

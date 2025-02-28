@@ -1,7 +1,8 @@
 const ApiError = require("../utils/apiError.js");
 const ApiResponse = require("../utils/apiResponse.js");
 const Equipment = require("../models/equipment.js");
-const uploadOnCloudinary = require("../utils/cloudinary.js");
+const { uploadOnCloudinary, removeFromCloudinary } = require("../utils/cloudinary.js");
+const fs = require("fs");
 
 // post a equipment for rent
 module.exports.rentEquipment = async( req , res )=> {
@@ -60,7 +61,7 @@ module.exports.rentEquipment = async( req , res )=> {
         throw new ApiError(400, error.message);
     }
     
-    const rentedEquipment = await Equipment.findById(equipment._id);
+    const rentedEquipment = await Equipment.findById(equipment._id).populate("owner", "displayName username email avatar");
 
     if(!rentedEquipment) {
         throw new ApiError(500 , "Something went wrong while registering a equipment!");
@@ -74,10 +75,109 @@ module.exports.rentEquipment = async( req , res )=> {
 }
 
 // Update equipment details
-module.exports.updateEquipmentDetails = async ( req , res )=> {}
+module.exports.updateEquipmentDetails = async ( req , res )=> {
+    const { equipmentData } = req.body ; 
+    const { id } = req.params;
+
+    let equipment = await Equipment.findById(id);
+
+    if(!equipment) {
+        throw new ApiError(404, "Equipment not found");
+    }
+
+    // remove images and video field from incoming update request
+    delete equipmentData?.images;
+    delete equipmentData?.video;
+
+    if(!equipmentData || Object.keys(equipmentData).length === 0) {
+        throw new ApiError(400, "No equipment update data is provided to proceed");
+    }
+
+    if( equipment.owner.toString() !== req.user?._id.toString() ) {
+        throw new ApiError(403, "You are not authorized to update this equipment");
+    }
+
+    const updatedEquipment = await Equipment.findByIdAndUpdate(
+        id,
+        {
+            ...equipmentData,
+        },
+        {
+            new : true,
+        }
+    ).populate("owner", "displayName username email avatar");
+
+    if(!updatedEquipment) {
+        throw new ApiError(500, "Something went wrong while updating equipment details");
+    }
+
+    return res.status(200)
+    .json(
+        new ApiResponse( 200, updatedEquipment, "Equipment details updated successfully" )
+    );
+}
 
 // Update images of an equipment
-module.exports.updateEquipmentImages = async ( req , res )=> {}
+module.exports.updateEquipmentImages = async ( req , res )=> {
+    const { id } = req.params ; 
+    const { imageURLToDelete } = req.body ; 
+
+    const equipment = await Equipment.findById(id);
+
+    if(!equipment) {
+        throw new ApiError(404, "Equipment not found");
+    }
+
+    if (equipment.owner.toString() !== req.user?._id.toString()) {
+        throw new ApiError(403, "You are not authorized to update this equipment");
+    }
+
+    let imageLocalPath = req.file?.path ;
+
+    if( imageLocalPath && equipment.images.length === 5 && !imageURLToDelete) {
+        fs.unlinkSync(imageLocalPath);
+        throw new ApiError(400, "Image upload limit exceeded (Max: 5 images)");
+    }
+
+    let updatedImages = [...equipment.images];
+
+    if(!imageLocalPath) {
+        throw new ApiError(400, "Please provide image to upload");
+    }
+
+    if(imageURLToDelete) {
+        if(!equipment.images.includes(imageURLToDelete)) {
+            throw new ApiError(400, "The image you are trying to delete does not exist");
+        }
+
+        const deleteResponse = await removeFromCloudinary(imageURLToDelete);
+
+        if(!deleteResponse.success) {
+            throw new ApiError(500, "Failed to delete image from Cloudinary");
+        }
+
+        updatedImages = equipment.images.filter(img => img !== imageURLToDelete);
+
+    }
+
+    if (imageLocalPath) {
+        try {
+            const uploadedImage = await uploadOnCloudinary(imageLocalPath);
+            updatedImages.push(uploadedImage?.secure_url || "");
+        } catch (error) {
+            throw new ApiError(500, "Failed to upload new image");
+        }
+    }
+
+    equipment.images = updatedImages;
+    await equipment.save();
+
+    return res.status(200).json(
+        new ApiResponse(200, equipment, "Equipment image updated successfully")
+    );
+
+    
+}
 
 // Update preview video of an equipment
 module.exports.updateEquipmentVideo = async ( req, res )=> {}

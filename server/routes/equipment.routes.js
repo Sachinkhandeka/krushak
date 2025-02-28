@@ -22,13 +22,15 @@ router.post(
 router.put(
     "/:id",
     verifyJwt,
+    validateEquipmentSchema,
     wrapAsync(equipment.updateEquipmentDetails),
 );
 
 // Update images of an equipment
 router.put(
-    "/:id/images",
+    "/:id/image",
     verifyJwt,
+    upload.single("image"),
     wrapAsync(equipment.updateEquipmentImages),
 );
 
