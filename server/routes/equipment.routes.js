@@ -31,13 +31,14 @@ router.put(
     "/:id/image",
     verifyJwt,
     upload.single("image"),
-    wrapAsync(equipment.updateEquipmentImages),
+    wrapAsync(equipment.updateEquipmentImage),
 );
 
 // Update preview video of an equipment
 router.put(
     "/:id/video",
     verifyJwt,
+    upload.single("video"),
     wrapAsync(equipment.updateEquipmentVideo),
 );
 

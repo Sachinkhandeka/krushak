@@ -10,7 +10,7 @@ cloudinary.config({
 
 const uploadOnCloudinary = async (localFilePath)=> {
     try {
-        if(!localFilePath) return ApiError(401, "File path  not found!");
+        if(!localFilePath) throw new ApiError(401, "File path  not found!");
         const uploadedFile = await cloudinary.uploader.upload(localFilePath, {
             resource_type : "auto",
         });
@@ -19,14 +19,13 @@ const uploadOnCloudinary = async (localFilePath)=> {
         return uploadedFile ; 
     } catch (error) {
         fs.unlinkSync(localFilePath);  // removes the locally stored file as the upload operation fails.
-        console.log(error.message);
-        return ApiError(401, error.message);
+        throw new ApiError(401, error.message);
     }
 }
 
 const removeFromCloudinary = async (imgURL)=> {
     try {
-        if(!imgURL) return ApiError(401, "File URL is missing");
+        if(!imgURL) throw new ApiError(401, "File URL is missing");
 
         // Extract `public_id` from Cloudinary URL
         const urlParts = imgURL.split("/");
@@ -44,7 +43,7 @@ const removeFromCloudinary = async (imgURL)=> {
         
     } catch (error) {
         // console.log(error.message);
-        return ApiError(401, error.message);
+        throw new ApiError(401, error.message);
     }
 }
 

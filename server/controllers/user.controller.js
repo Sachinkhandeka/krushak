@@ -348,7 +348,7 @@ module.exports.updateUserAvatar = async ( req, res )=> {
         throw new ApiError(400, "Avatar file is missing");
     }
 
-    if(!req.user) {
+    if(!req.user.avatar) {
         throw new ApiError(400, "Logged in user not found");
     }
 
@@ -390,7 +390,7 @@ module.exports.updateUserCoverImage = async ( req , res )=> {
         throw new ApiError(400, "Cover image file is missing");
     }
 
-    if(!req.user) {
+    if(!req.user.coverImage) {
         throw new ApiError(400, "Logged in user not found");
     }
 
