@@ -223,12 +223,10 @@ module.exports.updateEquipmentVideo = async ( req, res )=> {
     }
 
     //  Upload New Video to Cloudinary
-    console.log("Uploading new video to Cloudinary...");
     let uploadedVideo;
     try {
         uploadedVideo = await uploadOnCloudinary(videoLocalPath);
     } catch (error) {
-        console.error("Video Upload Error:", error);
         fs.unlinkSync(videoLocalPath); // Remove local file if upload fails
         throw new ApiError(500, "Error while uploading preview video, please try again");
     }
@@ -257,10 +255,61 @@ module.exports.updateEquipmentVideo = async ( req, res )=> {
 }
 
 // Delete an equipment listing
-module.exports.deleteEquipmentListing = async ( req , res )=> {}
+module.exports.deleteEquipmentListing = async ( req , res )=> {
+    const { id } = req.params ;
+    
+    // Find Equipment
+    const equipment = await Equipment.findById(id);
+    if (!equipment) {
+        throw new ApiError(404, "Equipment not found");
+    }
+
+    //  Ensure the logged-in user is the owner
+    if (equipment.owner.toString() !== req.user?._id.toString()) {
+        throw new ApiError(403, "You are not authorized to update this equipment");
+    }
+
+    //  Delete Existing Images (If Available)
+    if(equipment.images.length !== 0) {
+        await Promise.all(equipment.images.map(imgToDelete => removeFromCloudinary(imgToDelete)));
+    }
+
+    //  Delete Existing Video (If Available)
+    if (equipment.video) {
+        const deleteResponse = await removeFromCloudinary(equipment.video);
+        if (!deleteResponse.success) {
+            throw new ApiError(500, "Failed to delete existing video from Cloudinary");
+        }
+    }
+
+    const deletedEquipment = await Equipment.findByIdAndDelete(id);
+
+    if(!deletedEquipment) {
+        throw new ApiError(500, "Something went wrong while deleting equipment");
+    }
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, {}, `Equipment ( ${deletedEquipment.name} ) deleted successfully`)
+    );
+
+}
 
 // Get equipment details by ID
-module.exports.getOneEquipment = async ( req , res )=> {}
+module.exports.getOneEquipment = async ( req , res )=> {
+    const { id } = req.params ; 
+
+    const equipment = await Equipment.findById(id).populate("owner", "displayName username email avatar");
+
+    if(!equipment) {
+        throw new ApiError(403, "Equipment you are trying to find does not exists or deleted");
+    }
+
+    return res.status(200)
+    .json(
+        new ApiResponse(200, equipment, "Equipment found successfully")
+    );
+}
 
 // Get all equipment listings
 module.exports.getAllEquipment = async ( req , res )=> {}
