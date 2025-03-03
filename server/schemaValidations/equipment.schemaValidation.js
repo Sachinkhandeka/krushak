@@ -82,13 +82,12 @@ const equipmentSchemaValidation = Joi.object({
 
     availability: Joi.boolean().default(true),
 
-
     availabilityArea: Joi.array().items(
         Joi.object({
             country: Joi.string().required(),
             state: Joi.string().required(),
-            district: Joi.string().optional(),
-            village: Joi.string().optional(),
+            district: Joi.string().required(),
+            villages: Joi.array().items(Joi.string()).required(),
             coordinates: Joi.array().length(2).items(Joi.number()).required().messages({
                 "array.length": "Coordinates must have exactly 2 values [longitude, latitude]",
                 "number.base": "Coordinates must be numbers",
@@ -98,12 +97,24 @@ const equipmentSchemaValidation = Joi.object({
         "any.required": "At least one availability area is required",
     }),
 
-    discount: Joi.object({
-        amount: Joi.number().min(0).default(0),
-        type: Joi.string().valid("Flat (સિદ્ધાંત)", "Percentage (ટકાવારી)").default("Flat (સિદ્ધાંત)"),
-        validTill: Joi.date().optional(),
-        isActive: Joi.boolean().default(false),
-    }).optional(),
+    usedForCrops: Joi.array().items(
+        Joi.string().valid(
+            "Wheat (ગહું, गेहूं)", "Rice (ચોખા, चावल)", "Maize (મકાઈ, मक्का)", "Barley (જૌ, जौ)", "Millets (બાજરી, बाजरा)", 
+            "Pulses (દાળ, दाल)", "Chickpeas (ચણા, चना)", "Lentils (મસૂર, मसूर)", "Pigeon Pea (તુવેર, अरहर)", "Green Gram (મગ, मूंग)", 
+            "Black Gram (ઉડદ, उड़द)", "Peas (મટર, मटर)", 
+            "Groundnut (ભૂટ્ટા, मूंगफલી)", "Soybean (સોયાબીન, सोयाबीन)", "Mustard (સરસવ, सरसों)", "Sunflower (સૂર્યમુખી, सूरजमुखी)", 
+            "Castor (અરંડો, अरंडी)", "Sesame (તલ, तिल)", "Linseed (અળસી, अलसी)", "Safflower (કરસ, केसर)", 
+            "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथी)", 
+            "Turmeric (હળદર, हल्दी)", "Ginger (આદું, अदरक)", "Garlic (લસણ, लहसुन)", "Black Pepper (કાળી મરી, काली मिर्च)", 
+            "Cotton (કપાસ, कपास)", "Sugarcane (ગણ્ણો, गन्ना)", "Jute (જૂટ, जूट)", "Tea (ચા, चाय)", "Coffee (કોફી, कॉफी)", 
+            "Banana (કેળા, केला)", "Mango (કેરી, आम)", "Guava (જામફળ, अमरूद)", "Pomegranate (દાડમ, अनार)", "Papaya (પપૈયા, पपीता)", 
+            "Coconut (નાળિયેર, नारियल)", "Apple (સફરજન, सेब)", "Grapes (દ્રાક્ષ, अंगूर)", 
+            "Fodder Crops (ચારા પાક, चारा फसल)", "Medicinal & Aromatic Plants (ઔષધિ અને સુગંધિત છોડ, औषधीय एवं सुगंधित पौधे)"
+        )
+    ).optional().messages({
+        "array.base": "usedForCrops must be an array of crop names",
+        "any.only": "Invalid crop selected in usedForCrops",
+    }),
 
 })
 .required()

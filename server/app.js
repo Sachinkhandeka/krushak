@@ -7,6 +7,7 @@ const ApiError = require("./utils/apiError.js");
 // routes requiring
 const userRouter = require("./routes/user.routes.js");
 const equipmentRouter = require("./routes/equipment.routes.js");
+const bookingRoutes = require("./routes/booking.route.js");
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(cookieParser());
 // routes
 app.use( "/api/v1/users", userRouter );
 app.use( "/api/v1/equipment", equipmentRouter );
+app.use( "/api/v1/bookings", bookingRoutes )
 
 // static folder for client side pages
 app.use(express.static((path.join( __dirname, "../client/dist" ))));

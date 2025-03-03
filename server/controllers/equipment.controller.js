@@ -54,6 +54,7 @@ module.exports.rentEquipment = async( req , res )=> {
             owner : req.user?._id,
             availabilityArea : equipmentData.availabilityArea,
             discount : equipmentData.discount,
+            usedForCrops : equipmentData.usedForCrops,
         });
     
         await equipment.save();
@@ -275,12 +276,12 @@ module.exports.deleteEquipmentListing = async ( req , res )=> {
     }
 
     //  Delete Existing Video (If Available)
-    if (equipment.video) {
-        const deleteResponse = await removeFromCloudinary(equipment.video);
-        if (!deleteResponse.success) {
-            throw new ApiError(500, "Failed to delete existing video from Cloudinary");
-        }
-    }
+    // if (equipment.video) {
+    //     const deleteResponse = await removeFromCloudinary(equipment.video);
+    //     if (!deleteResponse.success) {
+    //         throw new ApiError(500, "Failed to delete existing video from Cloudinary");
+    //     }
+    // }
 
     const deletedEquipment = await Equipment.findByIdAndDelete(id);
 
@@ -299,6 +300,7 @@ module.exports.deleteEquipmentListing = async ( req , res )=> {
 module.exports.getOneEquipment = async ( req , res )=> {
     const { id } = req.params ; 
 
+    // Find Equipment
     const equipment = await Equipment.findById(id).populate("owner", "displayName username email avatar");
 
     if(!equipment) {
@@ -312,7 +314,84 @@ module.exports.getOneEquipment = async ( req , res )=> {
 }
 
 // Get all equipment listings
-module.exports.getAllEquipment = async ( req , res )=> {}
+module.exports.getAllEquipment = async ( req , res )=> {
+    const { latitude, longitude, radius = 50, sortBy = "createdAt", order = "desc" } = req.query;
 
-// Search for equipment by location & availability
-module.exports.searchEquipment = async ( req , res )=> {}
+    let pipeline = [];
+
+    //  If no location is provided, return all equipment
+    if (!latitude || !longitude) {
+        pipeline.push({ $sort: { createdAt: -1 } }); // Show latest equipment first
+    } else {
+        //  Find Equipment within 50 km 
+        pipeline.push({
+            $geoNear: {
+                near: {
+                    type: "Point",
+                    coordinates: [parseFloat(longitude), parseFloat(latitude)]
+                },
+                distanceField: "distance", // Field to store distance from user
+                spherical: true,
+                maxDistance: radius * 1000 // Convert km to meters
+            }
+        });
+    }
+
+    //  Populate Owner Details
+    pipeline.push({
+        $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "ownerDetails",
+            pipeline : [
+                {
+                    $project : {
+                        displayName : 1,
+                        username : 1,
+                        email : 1,
+                        avatar : 1,
+                    }
+                }
+            ]
+        }
+    });
+
+    pipeline.push({
+        $addFields: {
+            owner: { $arrayElemAt: ["$ownerDetails", 0] }
+        }
+    });
+
+    //  Sorting Logic (Apply only if sorting is requested)
+    let sortOrder = order === "asc" ? 1 : -1;
+    let sortField = {};
+
+    if (sortBy === "price") {
+        sortField["pricing.price"] = sortOrder;
+    } else if (sortBy === "latest") {
+        sortField["createdAt"] = sortOrder;
+    } else if (sortBy === "availability") {
+        sortField["availability"] = sortOrder;
+    }
+
+    if (Object.keys(sortField).length > 0) {
+        pipeline.push({ $sort: sortField });
+    }
+
+    //  Remove unnecessary fields
+    pipeline.push({
+        $project: {
+            ownerDetails: 0,
+            __v: 0
+        }
+    });
+
+    //  Execute Aggregation Pipeline
+    const equipmentList = await Equipment.aggregate(pipeline);
+
+    return res.status(200).json(
+        new ApiResponse(200, equipmentList, `${equipmentList.length > 1 ? 'Equipments' : 'Equipment'} fetched successfully.`)
+    );
+}
+

@@ -63,11 +63,5 @@ router.get(
     wrapAsync(equipment.getAllEquipment),
 );
 
-// Search for equipment by location & availability
-router.get(
-    "/search",
-    verifyJwt,
-    wrapAsync(equipment.searchEquipment),
-);
 
 module.exports = router ; 

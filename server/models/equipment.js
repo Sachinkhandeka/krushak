@@ -105,9 +105,11 @@ const equipmentSchema = new mongoose.Schema({
             },
             district: {
                 type: String,
+                required : true
             },
-            village: {
-                type: String,
+            villages: {
+                type: [String],
+                required : true,
             },
             coordinates: {
                 type: [Number], // [longitude, latitude]
@@ -116,28 +118,39 @@ const equipmentSchema = new mongoose.Schema({
             },
         },
     ],
-    discount: {
-        amount: {
-            type: Number,
-            min: 0,
-            default: 0,
-        },
-        type: {
-            type: String,
-            enum: ['Flat (સિદ્ધાંત)', 'Percentage (ટકાવારી)'],
-            default: 'Flat (સિદ્ધાંત)',
-        },
-        validTill: {
-            type: Date,
-        },
-        isActive: {
-            type: Boolean,
-            default: false,
-        },
-    },
-    reviews: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Review',
+
+    usedForCrops: [{
+        type: String,
+        enum: [
+            //  Cereal Crops
+            "Wheat (ગહું, गेहूं)", "Rice (ચોખા, चावल)", "Maize (મકાઈ, मक्का)", "Barley (જૌ, जौ)", "Millets (બાજરી, बाजरा)", 
+            
+            //  Pulses
+            "Pulses (દાળ, दाल)", "Chickpeas (ચણા, चना)", "Lentils (મસૂર, मसूर)", "Pigeon Pea (તુવેર, अरहर)", "Green Gram (મગ, मूंग)", 
+            "Black Gram (ઉડદ, उड़द)", "Peas (મટર, मटर)", 
+            
+            //  Oilseeds
+            "Groundnut (ભૂટ્ટા, मूंगफली)", "Soybean (સોયાબીન, सोयाबीन)", "Mustard (સરસવ, सरसों)", "Sunflower (સૂર્યમુખી, सूरजमुखी)", 
+            "Castor (અરંડો, अरंडी)", "Sesame (તલ, तिल)", "Linseed (અળસી, अलसी)", "Safflower (કરસ, केसर)", 
+    
+            //  Spices & Condiments
+            "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथी)", 
+            "Turmeric (હળદર, हल्दी)", "Ginger (આદું, अदरक)", "Garlic (લસણ, लहसुन)", "Black Pepper (કાળી મરી, काली मिर्च)", 
+    
+            //  Cash Crops
+            "Cotton (કપાસ, कपास)", "Sugarcane (ગણ્ણો, गन्ना)", "Jute (જૂટ, जूट)", "Tea (ચા, चाय)", "Coffee (કોફી, कॉफी)", 
+    
+            //  Horticultural Crops
+            "Banana (કેળા, केला)", "Mango (કેરી, आम)", "Guava (જામફળ, अमरूद)", "Pomegranate (દાડમ, अनार)", "Papaya (પપૈયા, पपीता)", 
+            "Coconut (નાળિયેર, नारियल)", "Arecanut (સુપારી, सुपारी)", "Apple (સફરજન, सेब)", "Grapes (દ્રાક્ષ, अंगूर)", 
+    
+            //  Vegetables
+            "Potato (બટેટા, आलू)", "Tomato (ટામેટાં, टमाटर)", "Onion (ડુંગળી, प्याज)", "Brinjal (રીંગણ, बैंगन)", "Carrot (ગાજર, गाजर)", 
+            "Cabbage (પટાગોબી, पत्तागोभी)", "Cauliflower (ફૂલકોબી, फूलगोभी)", "Green Chilli (લીલા મરચાં, हरी मिर्च)", 
+    
+            //  Other Crops
+            "Fodder Crops (ચારા પાક, चारा फसल)", "Medicinal & Aromatic Plants (ઔષધિ અને સુગંધિત છોડ, औषधीय एवं सुगंधित पौधे)"
+        ]
     }],
 }, { timestamps: true });
 
