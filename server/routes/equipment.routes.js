@@ -59,7 +59,6 @@ router.get(
 // Get all equipment listings
 router.get(
     "/",
-    verifyJwt,
     wrapAsync(equipment.getAllEquipment),
 );
 

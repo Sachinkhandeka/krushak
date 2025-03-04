@@ -44,16 +44,6 @@ const userSchema = new mongoose.Schema({
         type : String,
         enum : ['Admin', 'Farmer', 'EquipmentOwner'],
     },
-    rentalHistory: [
-        {
-            equipmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' },
-            rentedOn: { type: Date, default: Date.now },
-            rentalPeriod: { type: String },
-            returnDate: { type: Date },
-            rentalStatus: { type: String, enum: ['Active', 'Completed', 'Cancelled'], default: 'Active' },
-            pricePaid: { type: Number }
-        }
-    ],
     recentlyViewedEquipment: [
         {
             equipmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' },

@@ -103,14 +103,20 @@ module.exports.registerUser = async ( req , res )=> {
 
 //login user controller
 module.exports.loginUser = async ( req , res )=> {
-    const { username, email, password } = req.body ; 
+    const { emailOrUsernameOrPhone, password } = req.body ; 
 
     // step-1 : check username or email 
-    if(!( username || email )) {
-        throw new ApiError(400, "username or password is required")
+    if(!emailOrUsernameOrPhone ) {
+        throw new ApiError(400, "email or username or phone and password is required")
     }
     // step-2 : find the user
-    const user = await User.findOne({ $or : [{ username }, { email }] });
+    const user = await User.findOne({ 
+        $or : [
+            { username : emailOrUsernameOrPhone }, 
+            { email : emailOrUsernameOrPhone }, 
+            { phone : emailOrUsernameOrPhone }
+        ] 
+    });
 
     if(!user) {
         throw new ApiError(404, "User with given username or email not exists");
