@@ -8,8 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { toggleSidebar } from "./redux/slices/sidebarSlice";
 
 const Home = React.lazy(() => import("./pages/Home.jsx"));
-const Signup = React.lazy(() => import("./pages/auth/Signup.jsx"));
-const Login = React.lazy(() => import("./pages/auth/Login.jsx"));
+const AuthModal = React.lazy(()=> import("./pages/auth/AuthModal.jsx"));
 const NotFound = React.lazy(() => import("./pages/NotFound.jsx"));
 
 const App = () => {
@@ -22,7 +21,7 @@ const App = () => {
                 <Navbar />
                 <Sidebar />
 
-                {/* ✅ Blur Effect When Sidebar is Open */}
+                {/*  Blur Effect When Sidebar is Open */}
                 {isOpen && (
                     <div 
                         className="fixed inset-0 bg-black opacity-30 backdrop-blur-md z-10"
@@ -30,7 +29,7 @@ const App = () => {
                     ></div>
                 )}
 
-                {/* ✅ Main Content */}
+                {/*  Main Content */}
                 <main className={`transition-all duration-300 ${isOpen ? "blur-sm" : ""}`}>
                     <Routes>
                         <Route
@@ -69,7 +68,7 @@ const App = () => {
                             path="/signup"
                             element={
                                 <SuspenseWrapper>
-                                    <Signup />
+                                    <AuthModal />
                                 </SuspenseWrapper>
                             }
                         />
@@ -77,7 +76,7 @@ const App = () => {
                             path="/login"
                             element={
                                 <SuspenseWrapper>
-                                    <Login />
+                                    <AuthModal />
                                 </SuspenseWrapper>
                             }
                         />

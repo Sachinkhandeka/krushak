@@ -78,7 +78,8 @@ module.exports.registerUser = async ( req , res )=> {
         throw new ApiError(400, error.message);
     }
 
-    const createdUser = await User.findById(user._id).select("-password -refreshToken");
+    const createdUser = await User.findById(user._id)
+    .select("-password -refreshToken -recentlyViewedEquipment -favorites");
 
     if( !createdUser ) {
         throw new ApiError(500, "Something went wrong while registering a user!");
@@ -96,8 +97,22 @@ module.exports.registerUser = async ( req , res )=> {
         throw new ApiError(500, error.message);
     }
 
-    return res.status(201).json(
-        new ApiResponse(200, createdUser, "User registered successfully")
+    //  generate access & refresh tokens
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(createdUser._id);
+
+    const options = {
+        httpOnly : true,
+        secure : true,
+    }
+
+    return res.status(201)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(200, 
+            {
+                user : createdUser,
+            }, `Welcome to the krushak platform ${createdUser.displayName}`)
     )
 }
 
@@ -131,7 +146,8 @@ module.exports.loginUser = async ( req , res )=> {
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
     // step-5 : send tokens - cookies and response
-    const loggedinUser = await User.findById(user._id).select("-password -refreshToken");
+    const loggedinUser = await User.findById(user._id)
+    .select("-password -refreshToken -recentlyViewedEquipment -favorites");
 
     const options = {
         httpOnly : true,

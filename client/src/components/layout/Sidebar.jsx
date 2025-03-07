@@ -18,7 +18,7 @@ export default function Sidebar() {
     const dispatch = useDispatch();
     
     return (
-        <aside className={`bg-gray-100 dark:bg-gray-900 z-20 h-full w-64 p-4 fixed top-0 left-0 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <aside className={`bg-gray-100 dark:bg-gray-900 z-40 h-full w-64 p-4 fixed top-0 left-0 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
             {/* Sidebar Header */}
             <div className="flex items-center justify-between text-lg font-bold pb-4 border-b border-gray-600">
                 <span className="text-green-600">Krushak</span>

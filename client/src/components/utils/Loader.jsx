@@ -1,48 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 
-const Loader = ({ loading }) => {
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        if (!loading) {
-            setProgress(0);
-            return;
-        }
-
-        let speed = 100; // Initial speed
-        const interval = setInterval(() => {
-            setProgress((prev) => {
-                if (prev >= 100) {
-                    clearInterval(interval);
-                    return 100;
-                }
-                if (prev < 30) speed = 200; // Slow start
-                if (prev > 50) speed = 50;  // Fast finish
-                return prev + 10;
-            });
-        }, speed);
-
-        return () => clearInterval(interval);
-    }, [loading]);
-
+const Loader = ({ size = 40, color = "#ffffff", variant = "dots" }) => {
     return (
-        <button
-            disabled={loading}
-            className={`relative flex items-center justify-center w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition ${
-                loading ? "opacity-75 cursor-not-allowed" : ""
-            }`}
-        >
-            {/* Progress Effect Inside Button */}
-            {loading && (
-                <div
-                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 transition-all ease-out rounded-md"
-                    style={{ width: `${progress}%` }}
-                ></div>
+        <div className="flex justify-center items-center">
+            {variant === "dots" ? (
+                <div className="relative" style={{ width: size, height: size }}>
+                    {[...Array(8)].map((_, i) => (
+                        <motion.span
+                            key={i}
+                            className="absolute w-1 h-1 bg-green-500 rounded-full"
+                            style={{
+                                backgroundColor: color,
+                                top: "50%",
+                                left: "50%",
+                                transformOrigin: "center",
+                                transform: `rotate(${i * 45}deg) translate(${size / 2}px)`,
+                            }}
+                            animate={{ opacity: [0.3, 1, 0.3] }}
+                            transition={{
+                                duration: 1,
+                                repeat: Infinity,
+                                delay: i * 0.1,
+                                ease: "easeInOut",
+                            }}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <motion.div
+                    className="border-4 border-t-transparent border-black rounded-full"
+                    style={{ width: size, height: size, borderColor: color }}
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                />
             )}
-
-            {/* Button Text */}
-            <span className="relative z-10">{loading ? "Processing..."  : null}</span>
-        </button>
+        </div>
     );
 };
 

@@ -8,7 +8,9 @@ import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 import { toggleTheme } from "../../redux/slices/themeSlice";
 import { PiUser } from "react-icons/pi";
 import SuspenseWrapper from "../utils/SuspenseWrapper";
-const Login = React.lazy(()=> import("../../pages/auth/Login"));
+import UserAvatar from "./UserAvatar";
+
+const AuthModal = React.lazy(()=> import("../../pages/auth/AuthModal"));
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -18,7 +20,7 @@ const Navbar = () => {
     const [isLoginOpen, setIsLoginOpen] = useState(false);
 
     return (
-        <nav className="bg-white border-gray-200 dark:bg-gray-900 shadow-md sticky top-0 z-10">
+        <nav className="bg-white border-gray-200 dark:bg-gray-900 shadow-md sticky top-0 z-30">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <div className="flex items-center gap-3">
                     {/* Sidebar Toggle Button */}
@@ -30,10 +32,10 @@ const Navbar = () => {
 
                     {/* Logo and Branding */}
                     <Link to="/" className="flex items-center gap-2 rtl:space-x-reverse group">
-                    <span className="self-center text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-wide transition-colors duration-200 
-                        font-[cursive] group-hover:text-green-600 dark:group-hover:text-green-400">
+                        <span className="self-center text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-wide transition-colors duration-200 
+                            font-[cursive] group-hover:text-green-600 dark:group-hover:text-green-400">
                             Krushak.
-                    </span>
+                        </span>
                     </Link>
                 </div>
 
@@ -72,16 +74,14 @@ const Navbar = () => {
                             </div>
                         </Link>
                     ) : (
-                        <div className="relative w-10 h-10 flex items-center justify-center overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 cursor-pointer">
-                            SK
-                        </div>
+                        <UserAvatar user={currUser} />
                     ) }
                 </div>
             </div>
             {
                 isLoginOpen && (
                     <SuspenseWrapper>
-                        <Login isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+                        <AuthModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
                     </SuspenseWrapper>
                 )
             }
