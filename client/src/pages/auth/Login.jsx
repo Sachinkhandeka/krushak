@@ -103,9 +103,12 @@ const Login = ({ onClose, switchToSignup }) => {
                         {viewPass ? <FaRegEyeSlash /> : <FaRegEye />}
                     </button>
                 </div>
+                <div className="flex items-end justify-end text-xs" >
+                    <a href="/forgot-password" className="hover:underline hover:text-blue-600">Forgot Password</a>
+                </div>
 
                 <button 
-                    className="w-full bg-blue-600 text-white cursor-pointer py-2 rounded-md hover:bg-blue-700 transition"
+                    className="w-full bg-green-600 text-white cursor-pointer py-2 rounded-md hover:bg-green-700 transition"
                     disabled={loading}
                 >
                     { loading ?  (

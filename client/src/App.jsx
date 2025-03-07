@@ -9,6 +9,8 @@ import { toggleSidebar } from "./redux/slices/sidebarSlice";
 
 const Home = React.lazy(() => import("./pages/Home.jsx"));
 const AuthModal = React.lazy(()=> import("./pages/auth/AuthModal.jsx"));
+const ForgotPassword = React.lazy(()=> import("./pages/auth/ForgotPassword.jsx"));
+const ResetPassword = React.lazy(()=> import("./pages/auth/ResetPassword.jsx"));
 const NotFound = React.lazy(() => import("./pages/NotFound.jsx"));
 
 const App = () => {
@@ -77,6 +79,22 @@ const App = () => {
                             element={
                                 <SuspenseWrapper>
                                     <AuthModal />
+                                </SuspenseWrapper>
+                            }
+                        />
+                        <Route
+                            path="/forgot-password"
+                            element={
+                                <SuspenseWrapper>
+                                    <ForgotPassword />
+                                </SuspenseWrapper>
+                            }
+                        />
+                        <Route
+                            path="/reset-password/:token"
+                            element={
+                                <SuspenseWrapper>
+                                    <ResetPassword />
                                 </SuspenseWrapper>
                             }
                         />

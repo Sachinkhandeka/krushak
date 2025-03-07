@@ -447,62 +447,59 @@ module.exports.updateUserCoverImage = async ( req , res )=> {
 }
 
 // forgot password 
-module.exports.forgotUserPassword = async ( req , res )=> {
-    const { email, phoneNumber } = req.body ; 
+module.exports.forgotUserPassword = async (req, res) => {
+    const { emailOrPhone } = req.body;
 
-    if( !(email || phoneNumber) ) {
-        throw new ApiError(400, "Please provide email or phone number");
+    if (!emailOrPhone) {
+        throw new ApiError(400, "Please provide an email or phone number");
     }
 
-    let user ; 
+    // Find user by email or phone number
+    const user = await User.findOne({ 
+        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }] 
+    });
 
-    if( email ) {
-        user = await User.findOne({ email : email });
-    }else if (phoneNumber) {
-        user = await User.findOne({ phone : phoneNumber });
+    if (!user) {
+        throw new ApiError(404, "User account not found with the given input");
     }
 
-    if(!user) {
-        throw new ApiError(404, "User account not found with given input");
-    }
-
+    // Generate a reset token
     const token = jwt.sign(
         {
-            _id : user._id,
-            email : user.email,
+            _id: user._id,
+            email: user.email,
         },
         process.env.RESET_TOKEN_SECRET,
         {
-            expiresIn : process.env.RESET_TOKEN_EXPIRY,
+            expiresIn: process.env.RESET_TOKEN_EXPIRY,
         }
     );
 
-    const resetURL = process.env.NODE_ENV === "production" ? 
-        `https://www.krushak.co.in/reset-password/${token}`:
-        `http://localhost:5173/reset-password/${token}`;
+    const resetURL = process.env.NODE_ENV === "production"
+        ? `https://www.krushak.co.in/reset-password/${token}`
+        : `http://localhost:5173/reset-password/${token}`;
 
     try {
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: "Reset Your Password - Krushak",
-            html : forgotPasswordMail(user, resetURL)
-        }
+            html: forgotPasswordMail(user, resetURL),
+        };
         await transporter.sendMail(mailOptions);
     } catch (error) {
         throw new ApiError(500, error.message);
     }
-    
-    return res.status(200)
-    .json(
+
+    return res.status(200).json(
         new ApiResponse(
             200,
             {},
             "Password reset email sent successfully. Please check your email to proceed"
         )
-    )
+    );
+};
 
-}
 
 module.exports.resetUserPassword = async ( req , res )=> {
     const { token } = req.params ; 

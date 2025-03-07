@@ -168,17 +168,21 @@ const Signup = ({ onClose, switchToLogin }) => {
                     </div>
                 </div>
 
-                {loading ? (
-                    <Loader size={15} color="white" variant="dots" />
-                ) : (
-                    <button 
-                        className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-                        type="submit"
-                        disabled={loading}
-                    >
-                        Sign Up
-                    </button>
-                )}
+                <div className="flex items-end justify-end text-xs" >
+                    <a href="/forgot-password" className="hover:underline hover:text-blue-600">Forgot Password</a>
+                </div>
+
+                <button 
+                    className="w-full cursor-pointer bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+                    type="submit"
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <Loader size={15} color="white" variant="dots" />
+                    ) : (
+                        "Sign Up"
+                     )}
+                </button>
             </form>
 
             <div className="relative flex items-center my-4">
