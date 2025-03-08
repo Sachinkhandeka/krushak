@@ -23,29 +23,29 @@ const MapComponent = ({ equipmentLocations = [] }) => {
                 ? equipmentLocations[0].coordinates
                 : DEFAULT_CENTER;
 
-        // ✅ Initialize Mapbox map
+        //  Initialize Mapbox map
         const map = new mapboxgl.Map({
             container: mapContainerRef.current,
             style: "mapbox://styles/mapbox/streets-v11",
             center: defaultCenter,
-            zoom: equipmentLocations.length === 1 ? 12 : 8, // 🔍 Closer zoom for single location
+            zoom: equipmentLocations.length === 1 ? 12 : 8, //  Closer zoom for single location
         });
 
-        // ✅ Add Default Mapbox Markers for Each Equipment
+        //  Add Default Mapbox Markers for Each Equipment
         equipmentLocations.forEach((equipment) => {
             if (!equipment.coordinates || equipment.coordinates.length !== 2) {
-                console.warn("⚠️ Skipping invalid coordinates:", equipment);
+                console.warn(" Skipping invalid coordinates:", equipment);
                 return;
             }
 
             const [lng, lat] = equipment.coordinates;
 
-            // ✅ Create Mapbox marker
+            //  Create Mapbox marker
             const marker = new mapboxgl.Marker()
                 .setLngLat([lng, lat])
                 .addTo(map);
 
-            // ✅ Add a popup showing location name on hover
+            //  Add a popup showing location name on hover
             const popup = new mapboxgl.Popup({
                 closeButton: false,
                 closeOnClick: false,
@@ -55,7 +55,7 @@ const MapComponent = ({ equipmentLocations = [] }) => {
             marker.getElement().addEventListener("mouseenter", () => popup.addTo(map));
             marker.getElement().addEventListener("mouseleave", () => popup.remove());
 
-            // ✅ Navigate to equipment detail on click
+            //  Navigate to equipment detail on click
             marker.getElement().addEventListener("click", () => {
                 if (equipment.id) {
                     navigate(`/equipment/${equipment.id}`);

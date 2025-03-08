@@ -52,7 +52,7 @@ const EquipmentInfo = ({ owner, pricing, availability, category, type, model, ye
             )}
 
             {/*  Equipment Specifications */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
+            <div className="grid grid-cols-1 gap-4 text-sm text-gray-700 dark:text-gray-300">
                 <p className="flex items-center gap-2" >
                     📌 
                     <span className="px-2 py-1 text-xs font-medium bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-md">{category}</span>

@@ -95,9 +95,12 @@ const AddEquipment = () => {
                 setAlert,
                 navigate
             );
-            setAlert({ type : "success", message : result.message });
-            setEquipmentId(result.data._id); 
-            setStep(4); 
+
+            if(result) {
+                setAlert({ type : "success", message : result.message });
+                setEquipmentId(result.data._id); 
+                setStep(4); 
+            }
         } catch (error) {
             setAlert({ type : "error", message : error.message});
         }

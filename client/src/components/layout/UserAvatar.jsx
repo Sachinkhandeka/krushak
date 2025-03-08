@@ -24,14 +24,11 @@ export default function UserAvatar({ user }) {
                 setAlert,
                 navigate
             );
-            const result = await response.json();
 
-            if (!response.ok) {
-                console.log(result.message);
-                return;
+            if(response) {
+                dispatch(signoutSuccess());
             }
-
-            dispatch(signoutSuccess());
+            navigate("/");
         } catch (error) {
             console.log(error.message);
         } finally {

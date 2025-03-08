@@ -16,9 +16,6 @@ export const fetchWithAuth = async (
         });
 
         const data = await response.json(); 
-        if (!data.message) {
-            data.message = "Something went wrong.";
-        }
 
         if (response.status === 401 && (data.message === "jwt expired" || data.message === "Unauthorized user request")) {
             if (retry) {
@@ -47,13 +44,14 @@ export const fetchWithAuth = async (
         // Properly handle API errors
         if (!response.ok) {
             setAlert({ type: "error", message: data.message });
-            return { success: false, message: data.message }; 
+            return;
+            
         }
 
         return data; 
     } catch (error) {
         setAlert({ type: "error", message: error.message || "Network error. Please try again." });
-        return { success: false, message: error.message || "Network error" };
+        return
     } finally {
         setLoading(false);
     }
