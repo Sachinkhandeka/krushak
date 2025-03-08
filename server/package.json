@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@mapbox/mapbox-sdk": "^0.16.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
@@ -16,7 +17,6 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",

@@ -1,20 +1,29 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PiUser } from "react-icons/pi";
 import { FiLogOut } from "react-icons/fi";
 import { signoutSuccess } from "../../redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import Loader from "../utils/Loader";
+import { fetchWithAuth } from "../../utilityFunction";
 
 export default function UserAvatar({ user }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState({ type : "", message : "" });
 
     const handleSignout = async () => {
         setLoading(true); // Set loading state before making the request
         try {
-            const response = await fetch("/api/v1/users/logout", { method: "POST" });
+            const response = await fetchWithAuth(
+                "/api/v1/users/logout", 
+                { method: "POST" },
+                setLoading,
+                setAlert,
+                navigate
+            );
             const result = await response.json();
 
             if (!response.ok) {

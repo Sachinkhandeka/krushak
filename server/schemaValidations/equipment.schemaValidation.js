@@ -88,14 +88,12 @@ const equipmentSchemaValidation = Joi.object({
             state: Joi.string().required(),
             district: Joi.string().required(),
             villages: Joi.array().items(Joi.string()).required(),
-            coordinates: Joi.array().length(2).items(Joi.number()).required().messages({
-                "array.length": "Coordinates must have exactly 2 values [longitude, latitude]",
-                "number.base": "Coordinates must be numbers",
-            }),
         })
     ).required().messages({
         "any.required": "At least one availability area is required",
     }),
+
+    currentLocation : Joi.string().required(),
 
     usedForCrops: Joi.array().items(
         Joi.string().valid(
@@ -107,8 +105,6 @@ const equipmentSchemaValidation = Joi.object({
             "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथी)", 
             "Turmeric (હળદર, हल्दी)", "Ginger (આદું, अदरक)", "Garlic (લસણ, लहसुन)", "Black Pepper (કાળી મરી, काली मिर्च)", 
             "Cotton (કપાસ, कपास)", "Sugarcane (ગણ્ણો, गन्ना)", "Jute (જૂટ, जूट)", "Tea (ચા, चाय)", "Coffee (કોફી, कॉफी)", 
-            "Banana (કેળા, केला)", "Mango (કેરી, आम)", "Guava (જામફળ, अमरूद)", "Pomegranate (દાડમ, अनार)", "Papaya (પપૈયા, पपीता)", 
-            "Coconut (નાળિયેર, नारियल)", "Apple (સફરજન, सेब)", "Grapes (દ્રાક્ષ, अंगूर)", 
             "Fodder Crops (ચારા પાક, चारा फसल)", "Medicinal & Aromatic Plants (ઔષધિ અને સુગંધિત છોડ, औषधीय एवं सुगंधित पौधे)"
         )
     ).optional().messages({

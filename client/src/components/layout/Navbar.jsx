@@ -44,8 +44,8 @@ const Navbar = () => {
                     {currUser && (
                         <div className="relative w-10 h-10 flex items-center justify-center overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 cursor-pointer" >
                             <button 
-                                className="flex items-center gap-2 hover:text-blue-700 dark:hover:text-blue-300 transition"
-                                onClick={() => navigate("/rent-equipment")}
+                                className="flex items-center gap-2 cursor-pointer hover:text-green-700 dark:hover:text-green-300 transition"
+                                onClick={() => navigate("/register-equipment")}
                             >
                                 <GoPlus size={28} /> 
                             </button>

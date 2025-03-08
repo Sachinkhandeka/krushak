@@ -6,10 +6,12 @@ import Sidebar from "./components/layout/Sidebar.jsx";
 import SuspenseWrapper from "./components/utils/SuspenseWrapper.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleSidebar } from "./redux/slices/sidebarSlice";
+import PrivateRoute from "./components/layout/PrivateRoute.jsx";
 
 const Home = React.lazy(() => import("./pages/Home.jsx"));
 const AuthModal = React.lazy(()=> import("./pages/auth/AuthModal.jsx"));
 const ForgotPassword = React.lazy(()=> import("./pages/auth/ForgotPassword.jsx"));
+const AddEquipment = React.lazy(()=> import("./pages/AddEquipment.jsx"));
 const ResetPassword = React.lazy(()=> import("./pages/auth/ResetPassword.jsx"));
 const NotFound = React.lazy(() => import("./pages/NotFound.jsx"));
 
@@ -32,7 +34,7 @@ const App = () => {
                 )}
 
                 {/*  Main Content */}
-                <main className={`transition-all duration-300 ${isOpen ? "blur-sm" : ""}`}>
+                <main className={`transition-all duration-300 mx-2 ${isOpen ? "blur-sm" : ""}`}>
                     <Routes>
                         <Route
                             path="/"
@@ -96,6 +98,16 @@ const App = () => {
                                 <SuspenseWrapper>
                                     <ResetPassword />
                                 </SuspenseWrapper>
+                            }
+                        />
+                        <Route
+                            path="/register-equipment"
+                            element={
+                                <PrivateRoute>
+                                    <SuspenseWrapper>
+                                        <AddEquipment />
+                                    </SuspenseWrapper>
+                                </PrivateRoute>
                             }
                         />
                         <Route

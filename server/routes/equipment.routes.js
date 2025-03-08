@@ -30,7 +30,7 @@ router.put(
 router.put(
     "/:id/image",
     verifyJwt,
-    upload.single("image"),
+    upload.array("images", 5),
     wrapAsync(equipment.updateEquipmentImage),
 );
 

@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 const mongooseAggrigatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -111,14 +112,30 @@ const equipmentSchema = new mongoose.Schema({
                 type: [String],
                 required : true,
             },
-            coordinates: {
-                type: [Number], // [longitude, latitude]
-                index: '2dsphere',
-                required: true,
-            },
         },
     ],
-
+    currentLocation : {
+        type : String,
+        required : true,
+    },
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point',
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true,
+            validate: {
+                validator: function (coords) {
+                    return coords.length === 2;
+                },
+            message: "Coordinates must be an array of [longitude, latitude]."
+            }
+        }
+    },
     usedForCrops: [{
         type: String,
         enum: [
@@ -139,10 +156,6 @@ const equipmentSchema = new mongoose.Schema({
     
             //  Cash Crops
             "Cotton (કપાસ, कपास)", "Sugarcane (ગણ્ણો, गन्ना)", "Jute (જૂટ, जूट)", "Tea (ચા, चाय)", "Coffee (કોફી, कॉफी)", 
-    
-            //  Horticultural Crops
-            "Banana (કેળા, केला)", "Mango (કેરી, आम)", "Guava (જામફળ, अमरूद)", "Pomegranate (દાડમ, अनार)", "Papaya (પપૈયા, पपीता)", 
-            "Coconut (નાળિયેર, नारियल)", "Arecanut (સુપારી, सुपारी)", "Apple (સફરજન, सेब)", "Grapes (દ્રાક્ષ, अंगूर)", 
     
             //  Vegetables
             "Potato (બટેટા, आलू)", "Tomato (ટામેટાં, टमाटर)", "Onion (ડુંગળી, प्याज)", "Brinjal (રીંગણ, बैंगन)", "Carrot (ગાજર, गाजर)", 
