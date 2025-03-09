@@ -33,7 +33,7 @@ const SignupWithGoogle = ({ setAlert, onClose }) => {
                 email: user.email,
                 password: user.uid,
                 avatar : user.photoURL,
-                phone: user.phoneNumber || localStorage.getItem("signupPhoneNumber"),
+                phone: user.phoneNumber,
                 role: "Farmer", 
             };
 

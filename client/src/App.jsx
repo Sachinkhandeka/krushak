@@ -16,6 +16,7 @@ const ResetPassword = React.lazy(()=> import("./pages/auth/ResetPassword.jsx"));
 const NotFound = React.lazy(() => import("./pages/NotFound.jsx"));
 const EquipmentDetail = React.lazy(()=> import("./pages/EquipmentDetail.jsx"));
 const MyEquipments = React.lazy(()=> import("./pages/MyEquipments.jsx"));
+const MyBookings = React.lazy(()=> import("./pages/MyBookings.jsx"));
 
 const App = () => {
     const { isOpen } = useSelector((state) => state.sidebar);
@@ -52,6 +53,16 @@ const App = () => {
                                 <PrivateRoute>
                                     <SuspenseWrapper>
                                         <MyEquipments />
+                                    </SuspenseWrapper>
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/:id/my-bookings"
+                            element={
+                                <PrivateRoute>
+                                    <SuspenseWrapper>
+                                        <MyBookings />
                                     </SuspenseWrapper>
                                 </PrivateRoute>
                             }

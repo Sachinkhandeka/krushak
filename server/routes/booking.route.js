@@ -16,5 +16,12 @@ router.get("/user", verifyJwt, wrapAsync(booking.getUserBookings));
 //  Get Owner's Bookings
 router.get("/owner", verifyJwt, wrapAsync(booking.getOwnerBookings));
 
+// confirm booking
+router.put(
+    "/:bookingId/confirm",
+    verifyJwt,
+    wrapAsync(booking.confirmBooking),
+);
+
 
 module.exports = router ; 

@@ -87,12 +87,13 @@ const EquipmentCard = ({ item }) => {
                 </div>
 
                 {/*  Pricing & Condition */}
-                <div className="flex justify-between items-center text-sm text-gray-700 dark:text-gray-300">
-                    <p className="font-medium">Condition: <span className="font-normal">{item.condition}</span></p>
-                    <p className="text-green-600 dark:text-green-400 text-xl font-bold">
+                <div className="flex items-center justify-end text-sm text-gray-700 dark:text-gray-300">
+                    <p className="text-green-600 dark:text-green-400 text-3xl font-bold">
                         ₹{item.pricing[0]?.price || "--"} <span className="text-sm font-normal">/ {item.pricing[0]?.unit || "--"}</span>
                     </p>
                 </div>
+
+                <p className="font-medium">Condition: <span className="font-normal">{item.condition}</span></p>
 
                 {/*  Model & Year */}
                 <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400">
@@ -128,6 +129,7 @@ const EquipmentCard = ({ item }) => {
                     onClick={(e) => {
                         e.stopPropagation(); //  Prevent card click navigation
                         setShowBookingModal(true); //  Open modal
+                        setLoading(true);
                     }}
                 >
                     {loading ? <Loader size={15} color="white" variant="dots" /> : "Book Now"}
@@ -158,7 +160,10 @@ const EquipmentCard = ({ item }) => {
                         {/* ❌ Close Button */}
                         <button 
                             className="mt-4 w-full cursor-pointer bg-gray-500 text-white py-2 rounded-lg font-semibold hover:bg-gray-600 transition"
-                            onClick={() => setShowBookingModal(false)}
+                            onClick={() => {
+                                setShowBookingModal(false);
+                                setLoading(false);
+                            }}
                         >
                             Close
                         </button>

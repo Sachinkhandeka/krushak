@@ -14,7 +14,7 @@ export default function Sidebar() {
     const navItems = [
         { name: "Home", path: "/", icon: <FaHome /> },
         currUser?.role === "EquipmentOwner" && { name: "My Equipments", path: `${currUser._id}/my-equipments`, icon: <FaTractor /> },
-        { name: "My Bookings", path: "/bookings", icon: <FaClipboardList /> },
+        currUser?._id && { name: "My Bookings", path: `/${currUser._id}/my-bookings`, icon: <FaClipboardList /> },
         { name: "Recently Viewed", path: "/recently-viewed-items", icon: <MdViewInAr /> },
         { name: "Profile", path: "/profile", icon: <FaUserCircle /> },
     ].filter(Boolean); //  Remove `null` values (if condition fails)
