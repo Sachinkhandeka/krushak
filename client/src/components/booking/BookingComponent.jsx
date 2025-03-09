@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { fetchWithAuth } from "../../utilityFunction.js";
 import { useNavigate } from "react-router-dom";
 import Alert from "../utils/Alert.jsx";
-import BookingButton from "./BookingButton.jsx";
-import BookingModal from "./BookingModal.jsx";
-import OwnerContactCard from "./OwnerContactCard.jsx";
+
+const BookingButton = React.lazy(()=> import("./BookingButton.jsx"));
+const BookingModal = React.lazy(()=> import("./BookingModal.jsx"));
+const OwnerContactCard = React.lazy(()=> import("./OwnerContactCard.jsx"));
 
 const BookingComponent = ({ equipment, owner, pricing }) => {
     const navigate = useNavigate();

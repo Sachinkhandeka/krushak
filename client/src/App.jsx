@@ -15,6 +15,7 @@ const AddEquipment = React.lazy(()=> import("./pages/AddEquipment.jsx"));
 const ResetPassword = React.lazy(()=> import("./pages/auth/ResetPassword.jsx"));
 const NotFound = React.lazy(() => import("./pages/NotFound.jsx"));
 const EquipmentDetail = React.lazy(()=> import("./pages/EquipmentDetail.jsx"));
+const MyEquipments = React.lazy(()=> import("./pages/MyEquipments.jsx"));
 
 const App = () => {
     const { isOpen } = useSelector((state) => state.sidebar);
@@ -46,11 +47,13 @@ const App = () => {
                             }
                         />
                         <Route
-                            path="/equipment"
+                            path="/:id/my-equipments"
                             element={
-                                <SuspenseWrapper>
-                                    <Home />
-                                </SuspenseWrapper>
+                                <PrivateRoute>
+                                    <SuspenseWrapper>
+                                        <MyEquipments />
+                                    </SuspenseWrapper>
+                                </PrivateRoute>
                             }
                         />
                         <Route

@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Loader from "../utils/Loader";
-import BookingComponent from "../booking/BookingComponent";
 import { PiUserLight } from "react-icons/pi";
 
-const EquipmentCard = ({ item }) => {
+const OwnerEquipmentCard = ({ item }) => {
     const navigate = useNavigate();
     const [preview, setPreview] = useState(item.video || item.images[0]); 
-    const [showAvailability, setShowAvailability] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [showBookingModal, setShowBookingModal] = useState(false);
 
     //  Function to handle navigation
     const handleCardClick = (e) => {
@@ -22,23 +17,6 @@ const EquipmentCard = ({ item }) => {
             onClick={handleCardClick} 
             className="relative bg-white dark:bg-gray-900 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition cursor-pointer"
         >
-            {/*  Availability Indicator */}
-            {item.availability && (
-                <div 
-                    className="absolute top-3 right-3 w-4 h-4 bg-green-500 rounded-full animate-ping cursor-pointer"
-                    onMouseEnter={() => setShowAvailability(true)} 
-                    onMouseLeave={() => setShowAvailability(false)}
-                    onClick={(e) => e.stopPropagation()}
-                ></div>
-            )}
-
-            {/*  Availability Tooltip */}
-            {showAvailability && (
-                <div className="absolute top-10 right-3 bg-black text-white text-xs px-2 py-1 rounded-md shadow-lg">
-                    Available
-                </div>
-            )}
-
             {/*  Preview Section */}
             <div className="w-full h-72 bg-gray-200 dark:bg-gray-700 overflow-hidden">
                 {preview.includes(".mp4") ? (
@@ -108,65 +86,22 @@ const EquipmentCard = ({ item }) => {
 
                 {/*  Owner Details */}
                 <div className="flex items-center gap-2 mt-3">
-                    { item.owner.avatar !== "" ? (
+                    { item.owner.avatar ? (
                         <img 
-                            src={item.ownerContact?.avatar || "/default-avatar.png"} 
-                            alt={item.ownerContact?.displayName || "Owner"} 
+                            src={item.owner.avatar} 
+                            alt={item.owner.displayName || "Owner"} 
                             className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-600"
                         />
                     ) : (
-                        <span className="w-10 h-10 rounded-full flex items-center justify-center object-cover text-gray-400 dark:text-gray-600 border border-gray-300 dark:border-gray-600" >
+                        <span className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-600 border border-gray-300 dark:border-gray-600">
                             <PiUserLight size={32} />
                         </span>
-                    ) }
+                    )}
                     <p className="text-sm text-gray-700 dark:text-gray-300">Owned by <span className="font-medium">{item.owner.displayName}</span></p>
                 </div>
-
-                {/* Booking Button */}
-                <button 
-                    className="mt-4 w-full cursor-pointer bg-green-600 dark:bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-700 dark:hover:bg-green-600 transition flex items-center justify-center"
-                    onClick={(e) => {
-                        e.stopPropagation(); //  Prevent card click navigation
-                        setShowBookingModal(true); //  Open modal
-                    }}
-                >
-                    {loading ? <Loader size={15} color="white" variant="dots" /> : "Book Now"}
-                </button>
             </div>
-
-            {/*  Booking Modal */}
-            {showBookingModal && (
-                <div 
-                    className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-40"
-                    onClick={(e) => {
-                        e.stopPropagation(); //  Prevent card click navigation
-                    }}
-                >
-                    <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-md w-full z-50">
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Booking Confirmation</h2>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                            Complete your booking for <strong>{item.name}</strong> below.
-                        </p>
-
-                        {/*  Booking Component */}
-                        <BookingComponent 
-                            equipment={item} 
-                            owner={item.owner} 
-                            pricing={item.pricing} 
-                        />
-
-                        {/* ❌ Close Button */}
-                        <button 
-                            className="mt-4 w-full cursor-pointer bg-gray-500 text-white py-2 rounded-lg font-semibold hover:bg-gray-600 transition"
-                            onClick={() => setShowBookingModal(false)}
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
 
-export default EquipmentCard;
+export default OwnerEquipmentCard;

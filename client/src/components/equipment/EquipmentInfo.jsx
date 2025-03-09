@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaRupeeSign, FaCheckCircle } from "react-icons/fa";
 import { PiUserLight } from "react-icons/pi";
+import Loader from "../utils/Loader";
+import BookingComponent from "../booking/BookingComponent";
 
-const EquipmentInfo = ({ owner, pricing, availability, category, type, model, year, condition, description }) => {
+const EquipmentInfo = ({ equipment, owner, pricing, availability, category, type, model, year, condition, description }) => {
+    const [loading, setLoading] = useState(false);
+    const [showBookingModal, setShowBookingModal] = useState(false);
     return (
         <div className="w-full md:w-2/5 bg-white dark:bg-gray-900  p-6 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700">
             {/*  Owner Information */}
@@ -86,12 +90,52 @@ const EquipmentInfo = ({ owner, pricing, availability, category, type, model, ye
                 </p>
             </div>
 
-            {/*  Booking Button */}
+            {/* Booking Button */}
             <button 
-                className="mt-6 w-full cursor-pointer bg-gradient-to-r from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 text-white py-2 rounded-lg font-semibold hover:shadow-lg transition-all"
-            >
-                Book Now
+                    className="mt-4 w-full cursor-pointer bg-green-600 dark:bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-700 dark:hover:bg-green-600 transition flex items-center justify-center"
+                    onClick={() => {
+                        setShowBookingModal(true);
+                        setLoading(true);
+                    }}
+                    disabled={loading}
+                >
+                    {loading ? <Loader size={15} color="white" variant="dots" /> : "Book Now"}
             </button>
+
+            {/*  Booking Modal */}
+            {showBookingModal && (
+                <div 
+                    className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-40"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                >
+                    <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-md w-full z-50">
+                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Booking Confirmation</h2>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            Complete your booking for <strong>{equipment.name}</strong> below.
+                        </p>
+
+                        {/*  Booking Component */}
+                        <BookingComponent
+                            equipment={equipment} 
+                            owner={equipment.owner} 
+                            pricing={equipment.pricing} 
+                        />
+
+                        {/* ❌ Close Button */}
+                        <button 
+                            className="mt-4 w-full cursor-pointer bg-gray-500 text-white py-2 rounded-lg font-semibold hover:bg-gray-600 transition"
+                            onClick={() => {
+                                setShowBookingModal(false);
+                                setLoading(false);
+                            }}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

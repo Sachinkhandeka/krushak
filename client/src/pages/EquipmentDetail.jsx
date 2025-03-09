@@ -73,6 +73,7 @@ const EquipmentDetail = () => {
                 />
 
                 <EquipmentInfo 
+                    equipment={equipment}
                     owner={equipment.owner} 
                     pricing={equipment.pricing} 
                     availability={equipment.availability}

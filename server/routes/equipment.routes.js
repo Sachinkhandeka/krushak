@@ -56,6 +56,13 @@ router.get(
     wrapAsync(equipment.getOneEquipment),
 );
 
+// get owner Equipments
+router.get(
+    "/owner/equipments",
+    verifyJwt,
+    wrapAsync(equipment.getOwnerEquipments),
+);
+
 // Get all equipment listings
 router.get(
     "/",

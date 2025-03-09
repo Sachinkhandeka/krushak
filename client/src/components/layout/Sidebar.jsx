@@ -10,14 +10,14 @@ export default function Sidebar() {
     const isOpen = useSelector((state) => state.sidebar.isOpen);
     const dispatch = useDispatch();
 
-    // ✅ Define navigation items dynamically based on role
+    //  Define navigation items dynamically based on role
     const navItems = [
         { name: "Home", path: "/", icon: <FaHome /> },
-        currUser?.role === "EquipmentOwner" && { name: "My Equipments", path: "/equipments", icon: <FaTractor /> },
+        currUser?.role === "EquipmentOwner" && { name: "My Equipments", path: `${currUser._id}/my-equipments`, icon: <FaTractor /> },
         { name: "My Bookings", path: "/bookings", icon: <FaClipboardList /> },
         { name: "Recently Viewed", path: "/recently-viewed-items", icon: <MdViewInAr /> },
         { name: "Profile", path: "/profile", icon: <FaUserCircle /> },
-    ].filter(Boolean); // ✅ Remove `null` values (if condition fails)
+    ].filter(Boolean); //  Remove `null` values (if condition fails)
 
     return (
         <aside className={`bg-gray-100 dark:bg-gray-900 z-40 h-full w-64 p-4 fixed top-0 left-0 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>

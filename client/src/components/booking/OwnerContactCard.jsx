@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion"; // ✅ Import Framer Motion
+import { motion, AnimatePresence } from "framer-motion"; 
 import { FaCopy, FaCheck, FaPhoneAlt } from "react-icons/fa";
 import { PiUserLight } from "react-icons/pi";
 
 const OwnerContactCard = ({ ownerContact }) => {
     const [copied, setCopied] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(true); // ✅ Control animation visibility
+    const [showSuccess, setShowSuccess] = useState(true); 
 
     useEffect(() => {
-        // ✅ Hide success message after 3 seconds
+        //  Hide success message after 3 seconds
         const timer = setTimeout(() => setShowSuccess(false), 3000);
         return () => clearTimeout(timer);
     }, []);
@@ -21,7 +21,7 @@ const OwnerContactCard = ({ ownerContact }) => {
 
     return (
         <div className="relative mt-6 bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-300 dark:border-gray-700 shadow-md transition-all">
-            {/* ✅ Animated Success Message */}
+            {/*  Animated Success Message */}
             <AnimatePresence>
                 {showSuccess && (
                     <motion.div
@@ -49,9 +49,9 @@ const OwnerContactCard = ({ ownerContact }) => {
                 Owner Contact Details
             </h3>
 
-            {/* ✅ Name Row */}
+            {/*  Name Row */}
             <div className="flex items-center gap-3">
-                {ownerContact.avatar ? (
+                {ownerContact && ownerContact.avatar ? (
                     <img 
                         src={ownerContact?.avatar} 
                         alt={ownerContact?.displayName || "Owner"} 
@@ -63,15 +63,15 @@ const OwnerContactCard = ({ ownerContact }) => {
                     </span>
                 )}
                 <p className="text-gray-800 dark:text-gray-300 text-md">
-                    <strong>Name:</strong> {ownerContact.name}
+                    <strong>Name:</strong> {ownerContact?.name}
                 </p>
             </div>
 
-            {/* ✅ Phone Row with Copy & Call */}
+            {/*  Phone Row with Copy & Call */}
             <div className="mt-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between h-14 bg-gray-200 dark:bg-gray-700 px-3 py-2 rounded-md">
                     <p className="text-gray-900 dark:text-gray-100 flex-1 truncate flex items-center gap-2">
-                        <FaPhoneAlt className="text-green-500" /> {ownerContact.phone}
+                        <FaPhoneAlt className="text-green-500" /> {ownerContact?.phone}
                     </p>
                     <button 
                         onClick={handleCopy} 
@@ -82,8 +82,8 @@ const OwnerContactCard = ({ ownerContact }) => {
                     </button>
                 </div>
 
-                {/* ✅ Call Now Button */}
-                <a href={`tel:${ownerContact.phone}`} className="w-full">
+                {/*  Call Now Button */}
+                <a href={`tel:${ownerContact?.phone}`} className="w-full">
                     <button className="w-full cursor-pointer bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2">
                         <FaPhoneAlt /> Call Now
                     </button>

@@ -339,6 +339,20 @@ module.exports.getOneEquipment = async ( req , res )=> {
     );
 }
 
+// owner Equipments
+module.exports.getOwnerEquipments = async ( req , res )=> {
+    const userId = req.user?._id;
+
+    //  Fetch equipment where the owner matches the logged-in user
+    const ownerEquipments = await Equipment.find({ owner: userId }).populate("owner", "displayName username email avatar");
+
+    if (ownerEquipments.length === 0) {
+        return res.status(404).json(new ApiResponse(404, [], "You have not listed any equipment yet."));
+    }
+
+    return res.status(200).json(new ApiResponse(200, ownerEquipments, "Owner's equipment fetched successfully."));
+}
+
 // Get all equipment listings
 module.exports.getAllEquipment = async ( req , res )=> {
     const { location, radius = 50, sortBy = "createdAt", order = "desc" } = req.query;
