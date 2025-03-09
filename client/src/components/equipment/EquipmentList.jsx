@@ -1,40 +1,66 @@
 import React, { useEffect, useState } from "react";
-import EquipmentCard from "./EquipmentCard";
-import { fetchWithAuth } from "../../utilityFunction";
-import { Link, useNavigate } from "react-router-dom";
+import EquipmentCard from "./EquipmentCard.jsx";
+import Loader from "../utils/Loader.jsx";
+import NoDataFound from "../common/NoDataFound.jsx";
+import { fetchWithAuth } from "../../utilityFunction.js";
+import { Link } from "react-router-dom";
 
 const EquipmentList = () => {
-    const navigate = useNavigate()
     const [equipments, setEquipments] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState({ type : "", message : "" });
+    const [loading, setLoading] = useState(true);
+    const [alert, setAlert] = useState({ type: "", message: "" });
 
-    const getEquipments = async ()=> {
-        setLoading(true);
+    const getEquipments = async () => {
         try {
-            
             const response = await fetchWithAuth(
                 "/api/v1/equipment",
-                { method : "GET" },
+                { method: "GET" },
                 setLoading,
-                setAlert,
-                navigate
+                setAlert
             );
 
-            setEquipments(response.data);
+            if (response?.data) {
+                setEquipments(response.data);
+            }
         } catch (error) {
+            setAlert({ type: "error", message: error.message });
+        } finally {
             setLoading(false);
-            setAlert({ type : "", message : "" });
         }
-    }
-    useEffect(()=> {
+    };
+
+    useEffect(() => {
         getEquipments();
-    },[]);
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader size={50} color="blue" variant="dots" />
+            </div>
+        );
+    }
+
+    if (equipments.length === 0) {
+        return (
+            <NoDataFound 
+                message="No Equipments Available" 
+                subMessage="Check back later or add a new equipment."
+                action={
+                    <Link 
+                        to={"/register-equipment"}
+                        className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        Add Equipment
+                    </Link>
+                }
+            />
+        );
+    }
 
     return (
-        <div className="p-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {equipments.map((equipment) => (
-                <EquipmentCard key={equipment._id} item={equipment} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {equipments.map((item) => (
+                <EquipmentCard key={item._id} item={item} />
             ))}
         </div>
     );
