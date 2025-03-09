@@ -5,18 +5,20 @@ import { FaHome, FaTractor, FaClipboardList, FaUserCircle } from "react-icons/fa
 import { useSelector, useDispatch } from "react-redux";
 import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 
-const navItems = [
-    { name: "Home", path: "/", icon: <FaHome /> },
-    { name: "Equipments", path: "/equipments", icon: <FaTractor /> },
-    { name: "My Bookings", path: "/bookings", icon: <FaClipboardList /> },
-    { name: "Recently Viewed", path: "/recently-viewed-items", icon: <MdViewInAr /> },
-    { name: "Profile", path: "/profile", icon: <FaUserCircle /> }
-];
-
 export default function Sidebar() {
+    const { currUser } = useSelector((state) => state.user);
     const isOpen = useSelector((state) => state.sidebar.isOpen);
     const dispatch = useDispatch();
-    
+
+    // ✅ Define navigation items dynamically based on role
+    const navItems = [
+        { name: "Home", path: "/", icon: <FaHome /> },
+        currUser?.role === "EquipmentOwner" && { name: "My Equipments", path: "/equipments", icon: <FaTractor /> },
+        { name: "My Bookings", path: "/bookings", icon: <FaClipboardList /> },
+        { name: "Recently Viewed", path: "/recently-viewed-items", icon: <MdViewInAr /> },
+        { name: "Profile", path: "/profile", icon: <FaUserCircle /> },
+    ].filter(Boolean); // ✅ Remove `null` values (if condition fails)
+
     return (
         <aside className={`bg-gray-100 dark:bg-gray-900 z-40 h-full w-64 p-4 fixed top-0 left-0 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
             {/* Sidebar Header */}

@@ -1,16 +1,23 @@
 import React from "react";
 import { FaRupeeSign, FaCheckCircle } from "react-icons/fa";
+import { PiUserLight } from "react-icons/pi";
 
 const EquipmentInfo = ({ owner, pricing, availability, category, type, model, year, condition, description }) => {
     return (
         <div className="w-full md:w-2/5 bg-white dark:bg-gray-900  p-6 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700">
             {/*  Owner Information */}
             <div className="flex items-center gap-4 border-b border-gray-300 pb-4 mb-4 dark:border-gray-700">
-                <img 
-                    src={owner.avatar} 
-                    alt={owner.displayName} 
-                    className="w-14 h-14 rounded-full object-cover"
-                />
+                { owner.avatar !== "" ? (
+                    <img 
+                        src={owner?.avatar || "/default-avatar.png"} 
+                        alt={owner?.displayName || "Owner"} 
+                        className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-600"
+                    />
+                ) : (
+                    <span className="w-12 h-12 rounded-full flex items-center justify-center object-cover text-gray-400 dark:text-gray-600 border border-gray-300 dark:border-gray-600" >
+                        <PiUserLight size={42} />
+                    </span>
+                ) }
                 <div>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">{owner.displayName}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">{owner.email}</p>
