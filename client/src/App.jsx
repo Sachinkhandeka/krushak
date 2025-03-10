@@ -17,6 +17,7 @@ const NotFound = React.lazy(() => import("./pages/NotFound.jsx"));
 const EquipmentDetail = React.lazy(()=> import("./pages/EquipmentDetail.jsx"));
 const MyEquipments = React.lazy(()=> import("./pages/MyEquipments.jsx"));
 const MyBookings = React.lazy(()=> import("./pages/MyBookings.jsx"));
+const EditEquipmentDetails = React.lazy(()=> import("./pages/EditEquipmentDetails.jsx"));
 
 const App = () => {
     const { isOpen } = useSelector((state) => state.sidebar);
@@ -53,6 +54,16 @@ const App = () => {
                                 <PrivateRoute>
                                     <SuspenseWrapper>
                                         <MyEquipments />
+                                    </SuspenseWrapper>
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/:id/my-equipments/edit"
+                            element={
+                                <PrivateRoute>
+                                    <SuspenseWrapper>
+                                        <EditEquipmentDetails />
                                     </SuspenseWrapper>
                                 </PrivateRoute>
                             }

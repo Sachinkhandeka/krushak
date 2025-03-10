@@ -6,6 +6,7 @@ const fs = require("fs");
 const User = require("../models/user.js");
 
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const { updateEquipmentSchema } = require("../schemaValidations/equipment.schemaValidation.js");
 const geocodingClient = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN });
 
 // post a equipment for rent
@@ -100,48 +101,68 @@ module.exports.rentEquipment = async( req , res )=> {
 }
 
 // Update equipment details
-module.exports.updateEquipmentDetails = async ( req , res )=> {
-    const { equipmentData } = req.body ; 
+module.exports.updateEquipmentDetails = async (req, res) => {
+    const { equipmentData } = req.body;
     const { id } = req.params;
 
     let equipment = await Equipment.findById(id);
-
-    if(!equipment) {
+    if (!equipment) {
         throw new ApiError(404, "Equipment not found");
     }
 
-    // remove images and video field from incoming update request
-    delete equipmentData?.images;
-    delete equipmentData?.video;
-
-    if(!equipmentData || Object.keys(equipmentData).length === 0) {
-        throw new ApiError(400, "No equipment update data is provided to proceed");
-    }
-
-    if( equipment.owner.toString() !== req.user?._id.toString() ) {
+    if (equipment.owner.toString() !== req.user?._id.toString()) {
         throw new ApiError(403, "You are not authorized to update this equipment");
     }
 
-    const updatedEquipment = await Equipment.findByIdAndUpdate(
-        id,
-        {
-            ...equipmentData,
-        },
-        {
-            new : true,
-        }
-    ).populate("owner", "displayName username email avatar");
+    // Remove restricted fields from update request
+    delete equipmentData?.images;
+    delete equipmentData?.video;
 
-    if(!updatedEquipment) {
+    if (!equipmentData || Object.keys(equipmentData).length === 0) {
+        throw new ApiError(400, "No equipment update data is provided to proceed");
+    }
+
+    // Validate request data
+    const { error, value } = updateEquipmentSchema.validate(equipmentData, { stripUnknown: true });
+    if (error) {
+        throw new ApiError(400, error.details.map((err) => err.message).join(", "));
+    }
+
+    // If `currentLocation` is updated, fetch new coordinates
+    if (equipmentData.currentLocation && equipmentData.currentLocation !== equipment.currentLocation) {
+        try {
+            const response = await geocodingClient
+                .forwardGeocode({
+                    query: equipmentData.currentLocation,
+                    limit: 1,
+                })
+                .send();
+
+            if (!response.body.features.length) {
+                throw new ApiError(400, "Invalid location provided.");
+            }
+
+            // Update both `currentLocation` and `geometry`
+            value.geometry = response.body.features[0].geometry;
+        } catch (error) {
+            throw new ApiError(500, "Failed to fetch coordinates for the updated location.");
+        }
+    }
+
+    const updatedEquipment = await Equipment.findByIdAndUpdate(id, value, {
+        new: true,
+        runValidators: false,
+    }).populate("owner", "displayName username email avatar");
+
+    if (!updatedEquipment) {
         throw new ApiError(500, "Something went wrong while updating equipment details");
     }
 
-    return res.status(200)
-    .json(
-        new ApiResponse( 200, updatedEquipment, "Equipment details updated successfully" )
-    );
-}
+    return res.status(200).json(new ApiResponse(200, updatedEquipment, "Equipment details updated successfully"));
+};
 
+
+//update equipment images
 module.exports.updateEquipmentImage = async (req, res) => {
     const { id } = req.params;
     const { imagesToDelete } = req.body; 
@@ -280,6 +301,52 @@ module.exports.updateEquipmentVideo = async ( req, res )=> {
         new ApiResponse(200, updatedEquipment, "Equipment preview video updated successfully")
     );
 }
+
+//delete equipment images
+module.exports.deleteEquipmentImage = async (req, res) => {
+    const { id } = req.params; 
+    const { imageURL } = req.body; 
+
+    if (!imageURL) {
+        throw new ApiError(400, "Image URL is required");
+    }
+
+    // Find Equipment
+    const equipment = await Equipment.findById(id);
+    if (!equipment) {
+        throw new ApiError(404, "Equipment not found");
+    }
+
+    // Ensure the logged-in user is the owner
+    if (equipment.owner.toString() !== req.user?._id.toString()) {
+        throw new ApiError(403, "You are not authorized to delete this image");
+    }
+
+    // Check if the image exists in the equipment
+    if (!equipment.images.includes(imageURL)) {
+        throw new ApiError(400, "This image does not exist in the equipment");
+    }
+
+    // Remove Image from Cloudinary
+    const deleteResponse = await removeFromCloudinary(imageURL);
+    if (!deleteResponse.success) {
+        throw new ApiError(500, `Failed to delete image from Cloudinary`);
+    }
+
+    // Remove image from MongoDB array
+    const updatedImages = equipment.images.filter(img => img !== imageURL);
+
+    // Update the Equipment Images in MongoDB
+    const updatedEquipment = await Equipment.findByIdAndUpdate(
+        id,
+        { $set: { images: updatedImages } },
+        { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(
+        new ApiResponse(200, updatedEquipment, "Image deleted successfully")
+    );
+};
 
 // Delete an equipment listing
 module.exports.deleteEquipmentListing = async ( req , res )=> {

@@ -9,7 +9,7 @@ const OwnerEquipmentCard = ({ item }) => {
     //  Function to handle navigation
     const handleCardClick = (e) => {
         if (e.target.tagName === "IMG" || e.target.tagName === "VIDEO") return;
-        navigate(`/equipment/${item._id}`);
+        navigate(`/${item._id}/my-equipments/edit`);
     };
 
     return (

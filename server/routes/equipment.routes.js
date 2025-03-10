@@ -22,7 +22,6 @@ router.post(
 router.put(
     "/:id",
     verifyJwt,
-    validateEquipmentSchema,
     wrapAsync(equipment.updateEquipmentDetails),
 );
 
@@ -40,6 +39,13 @@ router.put(
     verifyJwt,
     upload.single("video"),
     wrapAsync(equipment.updateEquipmentVideo),
+);
+
+// Delete an equipment image
+router.put(
+    "/:id/delete",
+    verifyJwt,
+    wrapAsync(equipment.deleteEquipmentImage),
 );
 
 // Delete an equipment listing

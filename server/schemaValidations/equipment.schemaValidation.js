@@ -97,15 +97,16 @@ const equipmentSchemaValidation = Joi.object({
 
     usedForCrops: Joi.array().items(
         Joi.string().valid(
-            "Wheat (ગહું, गेहूं)", "Rice (ચોખા, चावल)", "Maize (મકાઈ, मक्का)", "Barley (જૌ, जौ)", "Millets (બાજરી, बाजरा)", 
-            "Pulses (દાળ, दाल)", "Chickpeas (ચણા, चना)", "Lentils (મસૂર, मसूर)", "Pigeon Pea (તુવેર, अरहर)", "Green Gram (મગ, मूंग)", 
-            "Black Gram (ઉડદ, उड़द)", "Peas (મટર, मटर)", 
-            "Groundnut (ભૂટ્ટા, मूंगफલી)", "Soybean (સોયાબીન, सोयाबीन)", "Mustard (સરસવ, सरसों)", "Sunflower (સૂર્યમુખી, सूरजमुखी)", 
-            "Castor (અરંડો, अरंडी)", "Sesame (તલ, तिल)", "Linseed (અળસી, अलसी)", "Safflower (કરસ, केसर)", 
-            "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथी)", 
-            "Turmeric (હળદર, हल्दी)", "Ginger (આદું, अदरक)", "Garlic (લસણ, लहसुन)", "Black Pepper (કાળી મરી, काली मिर्च)", 
-            "Cotton (કપાસ, कपास)", "Sugarcane (ગણ્ણો, गन्ना)", "Jute (જૂટ, जूट)", "Tea (ચા, चाय)", "Coffee (કોફી, कॉफी)", 
-            "Fodder Crops (ચારા પાક, चारा फसल)", "Medicinal & Aromatic Plants (ઔષધિ અને સુગંધિત છોડ, औषधीय एवं सुगंधित पौधे)"
+            //  Spices & Condiments
+            "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथी)",
+            "Garden Cress Seeds (અસાળિયો,हलीम)",
+            //  Cereal Crops
+            "Wheat (ગહું, गेहूं)",  "Millets (બાજરી, बाजरा)", 
+            //  Pulses
+            "Pulses (દાળ, दाल)", "Chickpeas (ચણા, चना)", "Pigeon Pea (તુવેર, अरहर)", "Green Gram (મગ, मूंग)",  
+            //  Oilseeds
+            "Groundnut (ભૂટ્ટા, मूंगफली)", "Soybean (સોયાબીન, सोयाबीन)", "Mustard (રાયડો, सरसों)", 
+            "Castor (અરંડો, अरंडी)", "Sesame (તલ, तिल)", "Linseed (અળસી, अलसी)"
         )
     ).optional().messages({
         "array.base": "usedForCrops must be an array of crop names",
@@ -116,4 +117,57 @@ const equipmentSchemaValidation = Joi.object({
 .required()
 .options({ abortEarly: false });
 
-module.exports = equipmentSchemaValidation;
+const updateEquipmentSchema = Joi.object({
+    name: Joi.string().trim().min(2).max(100),
+    description: Joi.string().trim().min(5),
+    category: Joi.string().valid(
+        'Tractors & Power Equipment (ટ્રેક્ટર અને પાવર ઉપકરણો)',
+        'Soil Preparation Equipment (જમીન તૈયારી સાધનો)',
+        'Planting & Seeding Equipment (વાવણી અને બીજ રોપવાના સાધનો)',
+        'Irrigation Equipment (સિંચાઈ સાધનો)',
+        'Harvesting Equipment (કાપણી સાધનો)',
+        'Post-Harvest & Processing Equipment (કાપણી પછી અને પ્રક્રિયા સાધનો)',
+        'Other Agricultural Equipment (અન્ય કૃષિ સાધનો)'
+    ),
+    type: Joi.string().valid(
+        'Tractor (ટ્રેક્ટર)', 'Power Tiller (પાવર ટિલર)', 'Water Tanker (પાણીનો ટેન્કર)', 'Plough (હળ)', 
+        'Seed Drill (બીજ ડ્રિલ)', 'Cultivator (ખેતર ખેડવા માટેનું સાધન)', 'Rotavator (રોટાવેટર)', 'Harvester (કાપણી મશીન)', 
+        'Combine Harvester (કૉમ્બાઇન હાર્વેસ્ટર)', 'Sprayer (સ્પ્રેયર)', 'Weeder (વીડર)', 'Irrigation Equipment (સિંચાઈ સાધનો)', 
+        'Chaff Cutter (ચાફ કટર)', 'Thresher (થ્રેશર)', 'Balers (બેલર્સ)', 'Soil Testing Kit (માટી પરીક્ષણ કીટ)', 'Post-Harvest Equipment (કાપણી પછીના સાધનો)'
+    ),
+    model: Joi.object({
+        modelType: Joi.string().trim().allow(""),
+        isLatestModel: Joi.boolean(),
+    }),
+    year: Joi.number().integer().min(1900).max(new Date().getFullYear()),
+    condition: Joi.string().valid('Excellent (ઉત્તમ)', 'Good (સારો)', 'Fair (મધ્યમ)', 'Poor (નબળો)'),
+    pricing: Joi.array().items(
+        Joi.object({
+            unit: Joi.string().valid('hour (કલાક)', 'day (દિવસ)', 'week (અઠવાડિયું)', 'quantity (જથ્થો)', 'other (અન્ય)'),
+            price: Joi.number().min(1),
+        })
+    ),
+    availability: Joi.boolean(),
+    currentLocation: Joi.string().trim().allow(""),
+    availabilityArea: Joi.array().items(
+        Joi.object({
+            country: Joi.string().required(),
+            state: Joi.string().required(),
+            district: Joi.string().required(),
+            villages: Joi.array().items(Joi.string()).required(),
+        })
+    ),
+    usedForCrops: Joi.array().items(
+        Joi.string().valid(
+            "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथી)",
+            "Garden Cress Seeds (અસાળિયો,हलीम)", "Wheat (ગહું, गेहूं)", "Millets (બાજરી, बाजरा)", "Pulses (દાળ, दाल)",
+            "Chickpeas (ચણા, चना)", "Pigeon Pea (તુવેર, अरहर)", "Green Gram (મગ, मूंग)", "Groundnut (ભૂટ્ટા, मूંગफલી)", 
+            "Soybean (સોયાબીન, सोयाबीन)", "Mustard (રાયડો, सरसों)", "Castor (અરંડો, अरंडी)", "Sesame (તલ, तिल)", "Linseed (અળસી, अलसी)"
+        )
+    ),
+});
+
+module.exports = {  
+    equipmentSchemaValidation,
+    updateEquipmentSchema,
+}

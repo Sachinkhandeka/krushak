@@ -139,30 +139,16 @@ const equipmentSchema = new mongoose.Schema({
     usedForCrops: [{
         type: String,
         enum: [
-            //  Cereal Crops
-            "Wheat (ગહું, गेहूं)", "Rice (ચોખા, चावल)", "Maize (મકાઈ, मक्का)", "Barley (જૌ, जौ)", "Millets (બાજરી, बाजरा)", 
-            
-            //  Pulses
-            "Pulses (દાળ, दाल)", "Chickpeas (ચણા, चना)", "Lentils (મસૂર, मसूर)", "Pigeon Pea (તુવેર, अरहर)", "Green Gram (મગ, मूंग)", 
-            "Black Gram (ઉડદ, उड़द)", "Peas (મટર, मटर)", 
-            
-            //  Oilseeds
-            "Groundnut (ભૂટ્ટા, मूंगफली)", "Soybean (સોયાબીન, सोयाबीन)", "Mustard (સરસવ, सरसों)", "Sunflower (સૂર્યમુખી, सूरजमुखी)", 
-            "Castor (અરંડો, अरंडी)", "Sesame (તલ, तिल)", "Linseed (અળસી, अलसी)", "Safflower (કરસ, केसर)", 
-    
             //  Spices & Condiments
-            "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथी)", 
-            "Turmeric (હળદર, हल्दी)", "Ginger (આદું, अदरक)", "Garlic (લસણ, लहसुन)", "Black Pepper (કાળી મરી, काली मिर्च)", 
-    
-            //  Cash Crops
-            "Cotton (કપાસ, कपास)", "Sugarcane (ગણ્ણો, गन्ना)", "Jute (જૂટ, जूट)", "Tea (ચા, चाय)", "Coffee (કોફી, कॉफी)", 
-    
-            //  Vegetables
-            "Potato (બટેટા, आलू)", "Tomato (ટામેટાં, टमाटर)", "Onion (ડુંગળી, प्याज)", "Brinjal (રીંગણ, बैंगन)", "Carrot (ગાજર, गाजर)", 
-            "Cabbage (પટાગોબી, पत्तागोभी)", "Cauliflower (ફૂલકોબી, फूलगोभी)", "Green Chilli (લીલા મરચાં, हरी मिर्च)", 
-    
-            //  Other Crops
-            "Fodder Crops (ચારા પાક, चारा फसल)", "Medicinal & Aromatic Plants (ઔષધિ અને સુગંધિત છોડ, औषधीय एवं सुगंधित पौधे)"
+            "Cumin (જીરું, जीरा)", "Ajwain (અજમો, अजवाइन)", "Fennel (વરીયારી, सौंफ)", "Coriander (ધાણા, धनिया)", "Fenugreek (મેથી, मेथी)",
+            "Garden Cress Seeds (અસાળિયો,हलीम)",
+            //  Cereal Crops
+            "Wheat (ગહું, गेहूं)",  "Millets (બાજરી, बाजरा)", 
+            //  Pulses
+            "Pulses (દાળ, दाल)", "Chickpeas (ચણા, चना)", "Pigeon Pea (તુવેર, अरहर)", "Green Gram (મગ, मूंग)",  
+            //  Oilseeds
+            "Groundnut (ભૂટ્ટા, मूंगफली)", "Soybean (સોયાબીન, सोयाबीन)", "Mustard (રાયડો, सरसों)", 
+            "Castor (અરંડો, अरंडी)", "Sesame (તલ, तिल)", "Linseed (અળસી, अलसी)"  
         ]
     }],
 }, { timestamps: true });
