@@ -153,6 +153,10 @@ const equipmentSchema = new mongoose.Schema({
     }],
 }, { timestamps: true });
 
+//  Add Geospatial Index for `$geoNear`
+equipmentSchema.index({ geometry: "2dsphere" });
+
+//  Add Pagination Plugin
 equipmentSchema.plugin(mongooseAggrigatePaginate);
 
 const Equipment = mongoose.model("Equipment", equipmentSchema);
