@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../utils/Loader";
 import BookingComponent from "../booking/BookingComponent";
+import ToggleFavorite from "../common/ToggleFavorite";
 import { PiUserLight } from "react-icons/pi";
+import { useSelector } from "react-redux";
 
-const EquipmentCard = ({ item }) => {
+const EquipmentCard = ({ item, setAlert }) => {
+    const { currUser } = useSelector( state => state.user );
     const navigate = useNavigate();
     const [preview, setPreview] = useState(item.video || item.images[0]); 
     const [showAvailability, setShowAvailability] = useState(false);
@@ -41,6 +44,11 @@ const EquipmentCard = ({ item }) => {
 
             {/*  Preview Section */}
             <div className="w-full h-72 bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                <ToggleFavorite 
+                    itemId={item._id} 
+                    isInitiallyFavorite={currUser && currUser.favorites ? currUser.favorites.includes(item._id) : false}
+                    setAlert={setAlert} 
+                />
                 {preview.includes(".mp4") ? (
                     <video 
                         controls 

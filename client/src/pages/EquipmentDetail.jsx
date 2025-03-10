@@ -67,9 +67,11 @@ const EquipmentDetail = () => {
 
             <div className="flex flex-col md:flex-row gap-4">
                 <EquipmentGallery 
+                    equipmentId={equipment._id}
                     video={equipment.video} 
                     images={equipment.images} 
                     name={equipment.name} 
+                    setAlert={setAlert}
                 />
 
                 <EquipmentInfo 

@@ -4,6 +4,7 @@ import Loader from "../utils/Loader.jsx";
 import NoDataFound from "../common/NoDataFound.jsx";
 import { fetchWithAuth } from "../../utilityFunction.js";
 import { Link } from "react-router-dom";
+import Alert from "../utils/Alert.jsx";
 
 const EquipmentList = () => {
     const [equipments, setEquipments] = useState([]);
@@ -59,8 +60,14 @@ const EquipmentList = () => {
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* alert message */}
+            <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
+                {alert && alert.message && (
+                    <Alert type={alert.type} message={alert.message} autoDismiss onClose={() => setAlert(null)} />
+                )}
+            </div>
             {equipments.map((item) => (
-                <EquipmentCard key={item._id} item={item} />
+                <EquipmentCard key={item._id} item={item} setAlert={setAlert} />
             ))}
         </div>
     );

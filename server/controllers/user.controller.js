@@ -1,6 +1,7 @@
 const ApiError = require("../utils/apiError.js");
 const ApiResponse = require("../utils/apiResponse.js");
 const User = require("../models/user.js");
+const Equipment = require("../models/equipment.js");
 const { uploadOnCloudinary, removeFromCloudinary } = require("../utils/cloudinary.js");
 const jwt = require("jsonwebtoken");
 const transporter = require("../config/nodeMailer.js");
@@ -79,7 +80,7 @@ module.exports.registerUser = async ( req , res )=> {
     }
 
     const createdUser = await User.findById(user._id)
-    .select("-password -refreshToken -recentlyViewedEquipment -favorites");
+    .select("-password -refreshToken");
 
     if( !createdUser ) {
         throw new ApiError(500, "Something went wrong while registering a user!");
@@ -147,7 +148,7 @@ module.exports.loginUser = async ( req , res )=> {
 
     // step-5 : send tokens - cookies and response
     const loggedinUser = await User.findById(user._id)
-    .select("-password -refreshToken -recentlyViewedEquipment -favorites");
+    .select("-password -refreshToken");
 
     const options = {
         httpOnly : true,
@@ -557,3 +558,77 @@ module.exports.getAllUsers = async ( req , res )=> {
         message : "Ok from getAllUsers!",
     });
 }
+
+// Add or Remove Equipment from Favorites
+module.exports.toggleFavoriteEquipment = async (req, res) => {
+    const { id, equipmentId } = req.params;
+
+    // Check if user exists
+    const user = await User.findById(id);
+    if (!user) {
+        throw new ApiError(404, "User not found.");
+    }
+
+    // Check if equipment exists
+    const equipment = await Equipment.findById(equipmentId);
+    if (!equipment) {
+        throw new ApiError(404, "Equipment not found or permanently deleted.");
+    }
+
+    // Check if the equipment is already in favorites
+    const isFavorite = user.favorites.includes(equipmentId);
+
+    if (isFavorite) {
+        // Remove from favorites
+        user.favorites = user.favorites.filter((fav) => fav.toString() !== equipmentId);
+        await user.save();
+        return res.status(200).json(new ApiResponse(200, user.favorites, "Equipment removed from favorites."));
+    } else {
+        // Add to favorites
+        user.favorites.push(equipmentId);
+        await user.save();
+        return res.status(200).json(new ApiResponse(200, user.favorites, "Equipment added to favorites."));
+    }
+}
+
+// Update Recently Viewed Equipment
+module.exports.updateRecentlyViewedEquipment = async (req, res) => {
+    const { id, equipmentId } = req.params;
+
+    try {
+        // Find user
+        const user = await User.findById(id);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+
+        // Find if the equipment is already in recently viewed
+        const existingIndex = user.recentlyViewedEquipment.findIndex(
+            (item) => item.equipmentId.toString() === equipmentId
+        );
+
+        if (existingIndex !== -1) {
+            // If found, update the timestamp
+            user.recentlyViewedEquipment[existingIndex].viewedOn = new Date();
+        } else {
+            // Otherwise, add to the list
+            user.recentlyViewedEquipment.push({
+                equipmentId,
+                viewedOn: new Date(),
+            });
+
+            // Keep only the last 10 items
+            if (user.recentlyViewedEquipment.length > 10) {
+                user.recentlyViewedEquipment.shift(); // Remove the oldest entry
+            }
+        }
+
+        await user.save();
+
+        return res.status(200).json(
+            new ApiResponse(200, user.recentlyViewedEquipment, "Recently viewed equipment updated.")
+        );
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while updating recently viewed equipment");
+    }
+};

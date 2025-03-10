@@ -92,6 +92,20 @@ router.put(
     wrapAsync( user.updateUserProfile ),
 );
 
+// Add or Remove Equipment from Favorites
+router.put(
+    "/:id/favorite/:equipmentId",
+    verifyJwt,
+    wrapAsync(user.toggleFavoriteEquipment),
+);
+
+// Route to update recently viewed equipment
+router.put(
+    "/:id/recently-viewed/:equipmentId",
+    verifyJwt,
+    wrapAsync(user.updateRecentlyViewedEquipment),
+);
+
 // Delete user account
 router.delete(
     "/profile/:id",
