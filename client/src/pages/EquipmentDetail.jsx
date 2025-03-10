@@ -7,6 +7,7 @@ import EquipmentInfo from "../components/equipment/EquipmentInfo";
 import EquipmentLocation from "../components/equipment/EquipmentLocation";
 import MapComponent from "../components/common/MapComponent";
 import { RiUserLocationLine } from "react-icons/ri";
+import Alert from "../components/utils/Alert";
 
 const EquipmentDetail = () => {
     const navigate = useNavigate();
@@ -64,6 +65,13 @@ const EquipmentDetail = () => {
     return (
         <div className="max-w-6xl mx-auto px-0.5 py-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{equipment.name}</h1>
+
+            {/* alert message */}
+            <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
+                {alert && alert.message && (
+                    <Alert type={alert.type} message={alert.message} autoDismiss onClose={() => setAlert(null)} />
+                )}
+            </div>
 
             <div className="flex flex-col md:flex-row gap-4">
                 <EquipmentGallery 

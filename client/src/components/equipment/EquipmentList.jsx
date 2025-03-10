@@ -4,22 +4,15 @@ import Loader from "../utils/Loader.jsx";
 import NoDataFound from "../common/NoDataFound.jsx";
 import { fetchWithAuth } from "../../utilityFunction.js";
 import { Link } from "react-router-dom";
-import Alert from "../utils/Alert.jsx";
 
-const EquipmentList = () => {
+const EquipmentList = ({ equipmentResults, setAlert }) => {
     const [equipments, setEquipments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [alert, setAlert] = useState({ type: "", message: "" });
 
+    // Fetch all equipment on mount
     const getEquipments = async () => {
         try {
-            const response = await fetchWithAuth(
-                "/api/v1/equipment",
-                { method: "GET" },
-                setLoading,
-                setAlert
-            );
-
+            const response = await fetchWithAuth("/api/v1/equipment", { method: "GET" }, setLoading, setAlert);
             if (response?.data) {
                 setEquipments(response.data);
             }
@@ -42,7 +35,10 @@ const EquipmentList = () => {
         );
     }
 
-    if (equipments.length === 0) {
+    // Determine which data to display: search results or full equipment list
+    const displayEquipments = equipmentResults.length > 0 ? equipmentResults : equipments;
+
+    if (displayEquipments.length === 0) {
         return (
             <NoDataFound 
                 message="No Equipments Available" 
@@ -60,13 +56,7 @@ const EquipmentList = () => {
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* alert message */}
-            <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
-                {alert && alert.message && (
-                    <Alert type={alert.type} message={alert.message} autoDismiss onClose={() => setAlert(null)} />
-                )}
-            </div>
-            {equipments.map((item) => (
+            {displayEquipments.map((item) => (
                 <EquipmentCard key={item._id} item={item} setAlert={setAlert} />
             ))}
         </div>
