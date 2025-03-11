@@ -5,7 +5,7 @@ import Loader from "../utils/Loader";
 import { debounce } from "lodash"; 
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-const SearchBar = ({ setEquipmentResults, setAlert }) => {
+const SearchBar = ({ setEquipmentResults, setMapData, setAlert }) => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [isVisible, setIsVisible] = useState(true);
@@ -60,7 +60,8 @@ const SearchBar = ({ setEquipmentResults, setAlert }) => {
                     if(response.data.length === 0) {
                         return setAlert({ type: "info", message: `No equipment found near "${query !== "" ? query : 'this'}" location.` });
                     }
-                    setEquipmentResults(response.data);
+                    setEquipmentResults(response.data.equipments);
+                    setMapData(response.data.mapData);
                 } else {
                     setAlert({ type: "info", message: "No equipment found in this location." });
                     setEquipmentResults([]);

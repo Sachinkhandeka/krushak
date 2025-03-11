@@ -58,7 +58,6 @@ router.delete(
 // Get equipment details by ID
 router.get(
     "/:id",
-    verifyJwt,
     wrapAsync(equipment.getOneEquipment),
 );
 

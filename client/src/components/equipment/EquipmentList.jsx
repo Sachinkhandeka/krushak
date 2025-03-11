@@ -14,7 +14,7 @@ const EquipmentList = ({ equipmentResults, setAlert }) => {
         try {
             const response = await fetchWithAuth("/api/v1/equipment", { method: "GET" }, setLoading, setAlert);
             if (response?.data) {
-                setEquipments(response.data);
+                setEquipments(response.data.equipments);
             }
         } catch (error) {
             setAlert({ type: "error", message: error.message });

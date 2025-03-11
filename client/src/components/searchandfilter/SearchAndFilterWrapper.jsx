@@ -3,13 +3,13 @@ import SearchBar from "./SearchBar";
 import FilterButton from "./FilterButton";
 import FilterModal from "./FilterModal";
 
-const SearchAndFilterWrapper = ({ setEquipmentResults, setAlert }) => {
+const SearchAndFilterWrapper = ({ setEquipmentResults, setMapData, setAlert }) => {
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
     const [appliedFiltersCount, setAppliedFiltersCount] = useState(0); 
 
     return (
         <div className="relative w-full p-4">
-            <SearchBar setEquipmentResults={setEquipmentResults} setAlert={setAlert} />
+            <SearchBar setEquipmentResults={setEquipmentResults} setMapData={setMapData} setAlert={setAlert} />
             <FilterButton 
                 onClick={() => setIsFilterModalOpen(true)} 
                 appliedFiltersCount={appliedFiltersCount}

@@ -421,7 +421,7 @@ module.exports.getOwnerEquipments = async ( req , res )=> {
 }
 
 // Get all equipment listings
-module.exports.getAllEquipment = async ( req , res )=> {
+module.exports.getAllEquipment = async (req, res) => {
     const { location, radius = 50, sortBy = "createdAt", order = "desc" } = req.query;
 
     let longitude, latitude;
@@ -431,90 +431,92 @@ module.exports.getAllEquipment = async ( req , res )=> {
             limit: 1
         }).send();
 
-        if (
-            response.body.features.length > 0 &&
-            response.body.features[0].geometry &&
-            response.body.features[0].geometry.type === "Point"
-        ) {
+        if (response.body.features.length > 0) {
             [longitude, latitude] = response.body.features[0].geometry.coordinates;
         }
     }
 
     let pipeline = [];
 
-    //  If no location is provided, return all equipment
     if (!latitude || !longitude) {
-        pipeline.push({ $sort: { createdAt: -1 } }); // Show latest equipment first
+        pipeline.push({ $sort: { createdAt: -1 } });
     } else {
-        //  Find Equipment within 50 km 
         pipeline.push({
             $geoNear: {
-                near: {
-                    type: "Point",
-                    coordinates: [parseFloat(longitude), parseFloat(latitude)]
-                },
-                distanceField: "distance", // Field to store distance from user
+                near: { type: "Point", coordinates: [longitude, latitude] },
+                distanceField: "distance",
                 spherical: true,
-                maxDistance: radius * 1000 // Convert km to meters
+                maxDistance: radius * 1000
             }
         });
     }
 
-    //  Populate Owner Details
     pipeline.push({
         $lookup: {
             from: "users",
             localField: "owner",
             foreignField: "_id",
             as: "ownerDetails",
-            pipeline : [
-                {
-                    $project : {
-                        displayName : 1,
-                        username : 1,
-                        email : 1,
-                        avatar : 1,
-                    }
-                }
-            ]
+            pipeline: [{ $project: { displayName: 1, avatar: 1 } }]
         }
     });
 
-    pipeline.push({
-        $addFields: {
-            owner: { $arrayElemAt: ["$ownerDetails", 0] }
-        }
-    });
+    pipeline.push({ $addFields: { owner: { $arrayElemAt: ["$ownerDetails", 0] } } });
 
-    //  Sorting Logic (Apply only if sorting is requested)
     let sortOrder = order === "asc" ? 1 : -1;
     let sortField = {};
-
-    if (sortBy === "price") {
-        sortField["pricing.price"] = sortOrder;
-    } else if (sortBy === "latest") {
-        sortField["createdAt"] = sortOrder;
-    } else if (sortBy === "availability") {
-        sortField["availability"] = sortOrder;
-    }
-
+    if (sortBy === "price") sortField["pricing.price"] = sortOrder;
+    else if (sortBy === "latest") sortField["createdAt"] = sortOrder;
+    else if (sortBy === "availability") sortField["availability"] = sortOrder;
     if (Object.keys(sortField).length > 0) {
         pipeline.push({ $sort: sortField });
     }
 
-    //  Remove unnecessary fields
     pipeline.push({
         $project: {
-            ownerDetails: 0,
-            __v: 0
+            _id: 1,
+            name: 1,
+            description: 1,
+            category: 1,
+            type: 1,
+            model : 1,
+            year: 1,
+            condition: 1,
+            images: 1,
+            video: 1,
+            pricing: 1,
+            availability: 1,
+            availabilityArea: 1,
+            currentLocation: 1,
+            usedForCrops: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            owner: 1,
+            coordinates: "$geometry.coordinates"
         }
     });
 
-    //  Execute Aggregation Pipeline
     const equipmentList = await Equipment.aggregate(pipeline);
 
+    // ✅ Construct the map-related data
+    const mapData = {
+        userSearchedLocation: location ? { location, coordinates: [longitude, latitude] } : null,
+        nearByEquipments: equipmentList.map(equipment => ({
+            id: equipment._id,
+            coordinates: equipment.coordinates,
+            label: equipment.name,
+            ownerAvatar: equipment.owner?.avatar || null,
+            ownerName: equipment.owner?.displayName || "Unknown"
+        }))
+    };
+
     return res.status(200).json(
-        new ApiResponse(200, equipmentList, `${equipmentList.length > 1 ? 'Equipments' : 'Equipment'} fetched successfully.`)
+        new ApiResponse(
+            200, 
+            { equipments: equipmentList, mapData }, 
+            "Equipments fetched successfully."
+        )
     );
-}
+};
+
 

@@ -38,7 +38,7 @@ const App = () => {
                 )}
 
                 {/*  Main Content */}
-                <main className={`transition-all duration-300 mx-2 ${isOpen ? "blur-sm" : ""}`}>
+                <main className={`transition-all duration-300 mx-1 ${isOpen ? "blur-sm" : ""}`}>
                     <Routes>
                         <Route
                             path="/"
