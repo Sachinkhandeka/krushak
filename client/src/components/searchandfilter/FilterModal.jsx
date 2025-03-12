@@ -1,13 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
 import FilterCategory from "./filters/FilterCategory";
 import FilterType from "./filters/FilterType";
 import FilterPrice from "./filters/FilterPrice";
 import FilterCondition from "./filters/FilterCondition";
 import FilterCrop from "./filters/FilterCrop";
-import FilterLocation from "./filters/FilterLocation";
+import { fetchWithAuth } from "../../utilityFunction";
 
-const FilterModal = ({ isOpen, onClose, setAppliedFiltersCount, onClearFilters }) => {
+const FilterModal = ({ isOpen, onClose, setEquipmentResults, setAlert, setAppliedFiltersCount, onClearFilters, setMapData }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [loading, setLoading] = useState(false);
+    const [filterCount, setFilterCount] = useState(0);
+
+    // Update filter count based on applied filters in the URL
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        setFilterCount(Array.from(params.keys()).length);
+        setAppliedFiltersCount(Array.from(params.keys()).length);
+    }, [location.search]);
+
+   
+    const handleFilterSubmit = async () => {
+        setLoading(true);
+
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const queryString = params.toString();
+
+            const response = await fetchWithAuth(
+                `/api/v1/equipment/filter?${queryString}`, 
+                { method: "GET" },
+                setLoading,
+                setAlert,
+                navigate
+            );
+
+            if (response.success) {
+                setEquipmentResults(response.data.equipments);
+                setMapData(response.data.mapData);
+                setFilterCount(Array.from(params.keys()).length);
+                setAppliedFiltersCount(Array.from(params.keys()).length);
+                onClose();
+            }
+        } catch (error) {
+            setLoading(false);
+            setAlert({ type: "error", message: error.message });
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -33,13 +75,24 @@ const FilterModal = ({ isOpen, onClose, setAppliedFiltersCount, onClearFilters }
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="overflow-y-auto px-6 py-4 space-y-4 flex-1">
-                    <FilterLocation />
-                    <FilterCategory />
-                    <FilterType />
-                    <FilterPrice />
-                    <FilterCondition />
-                    <FilterCrop />
+                <div className="overflow-y-auto scroll-hidden px-0.5 py-4 space-y-4 flex-1">
+                    <FilterCrop
+                        setEquipmentResults={setEquipmentResults}
+                        setAlert={setAlert}
+                        setAppliedFiltersCount={setAppliedFiltersCount} 
+                    />
+                    <FilterCategory 
+                        setAppliedFiltersCount={setAppliedFiltersCount}
+                    />
+                    <FilterType
+                        setAppliedFiltersCount={setAppliedFiltersCount} 
+                    />
+                    <FilterPrice 
+                        setAppliedFiltersCount={setAppliedFiltersCount} 
+                    />
+                    <FilterCondition
+                        setAppliedFiltersCount={setAppliedFiltersCount}  
+                    />
                 </div>
 
                 {/* Sticky Footer */}
@@ -51,10 +104,10 @@ const FilterModal = ({ isOpen, onClose, setAppliedFiltersCount, onClearFilters }
                         Clear All
                     </button>
                     <button 
-                        className="bg-green-600 text-white cursor-pointer py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition"
-                        onClick={onClose}
+                        className="bg-green-600 text-white cursor-pointer py-2 px-4 rounded-md font-semibold hover:bg-green-700 transition flex items-center"
+                        onClick={handleFilterSubmit}
                     >
-                        Apply Filters
+                        {loading ? "Applying..." : `Apply Filters ${filterCount > 0 ? `(${filterCount})` : ""}`}
                     </button>
                 </div>
             </motion.div>

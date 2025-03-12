@@ -55,6 +55,12 @@ router.delete(
     wrapAsync(equipment.deleteEquipmentListing),
 );
 
+// filter all equipment listings by crop
+router.get(
+    "/filter",
+    wrapAsync(equipment.filterEquipment),
+);
+
 // Get equipment details by ID
 router.get(
     "/:id",

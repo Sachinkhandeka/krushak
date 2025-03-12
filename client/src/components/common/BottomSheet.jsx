@@ -66,10 +66,12 @@ const BottomSheet = ({ equipmentResults, setAlert }) => {
         dragHandleRef.current.addEventListener("mousedown", handleMouseDown);
 
         return () => {
-            dragHandleRef.current.removeEventListener("touchstart", handleTouchStart);
-            dragHandleRef.current.removeEventListener("touchmove", handleTouchMove);
-            dragHandleRef.current.removeEventListener("touchend", handleTouchEnd);
-            dragHandleRef.current.removeEventListener("mousedown", handleMouseDown);
+            if (dragHandleRef.current) {
+                dragHandleRef.current.removeEventListener("touchstart", handleTouchStart);
+                dragHandleRef.current.removeEventListener("touchmove", handleTouchMove);
+                dragHandleRef.current.removeEventListener("touchend", handleTouchEnd);
+                dragHandleRef.current.removeEventListener("mousedown", handleMouseDown);
+            }
         };
     }, []);
 

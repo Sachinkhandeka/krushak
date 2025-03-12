@@ -519,4 +519,92 @@ module.exports.getAllEquipment = async (req, res) => {
     );
 };
 
+module.exports.filterEquipment = async (req, res) => {
+    let { cropType, category, type, condition, minPrice, maxPrice } = req.query;
 
+    let pipeline = [];
+
+    let matchStage = {};
+
+    if (cropType) {
+        let cropArray = Array.isArray(cropType) ? cropType : cropType.split("|||").map(crop => crop.trim());
+        matchStage.usedForCrops = { $in: cropArray };
+    }
+
+    if (category) {
+        matchStage.category = category;
+    }
+
+    if (type) {
+        matchStage.type = type;
+    }
+
+    if (condition) {
+        matchStage.condition = condition;
+    }
+
+    if (minPrice || maxPrice) {
+        let priceFilter = {};
+        if (minPrice) priceFilter.$gte = parseInt(minPrice);
+        if (maxPrice) priceFilter.$lte = parseInt(maxPrice);
+
+        matchStage["pricing.price"] = priceFilter;
+    }
+
+    if (Object.keys(matchStage).length > 0) {
+        pipeline.push({ $match: matchStage });
+    }
+
+    pipeline.push({
+        $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "ownerDetails",
+            pipeline: [{ $project: { displayName: 1, avatar: 1 } }]
+        }
+    });
+
+    pipeline.push({ $addFields: { owner: { $arrayElemAt: ["$ownerDetails", 0] } } });
+
+    pipeline.push({
+        $project: {
+            _id: 1,
+            name: 1,
+            description: 1,
+            category: 1,
+            type: 1,
+            model: 1,
+            year: 1,
+            condition: 1,
+            images: 1,
+            video: 1,
+            pricing: 1,
+            availability: 1,
+            availabilityArea: 1,
+            currentLocation: 1,
+            usedForCrops: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            owner: 1,
+            coordinates: "$geometry.coordinates"
+        }
+    });
+
+    const equipmentList = await Equipment.aggregate(pipeline);
+
+    const mapData = {
+        userSearchedLocation: null,
+        nearByEquipments: equipmentList.map(equipment => ({
+            id: equipment._id,
+            coordinates: equipment.coordinates,
+            label: equipment.name,
+            ownerAvatar: equipment.owner?.avatar || null,
+            ownerName: equipment.owner?.displayName || "Unknown"
+        }))
+    };
+
+    return res.status(200).json(
+        new ApiResponse(200, { equipments: equipmentList, mapData }, "Equipments filtered successfully.")
+    );
+};
