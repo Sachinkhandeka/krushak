@@ -316,9 +316,9 @@ module.exports.getUserProfile = async ( req , res )=> {
 
 // Update user profile (Protected)
 module.exports.updateUserProfile = async ( req , res )=> {
-    const { displayName, email } = req.body ; 
+    const { displayName, email, phone } = req.body ; 
 
-    if(!displayName || !email) {
+    if(!displayName || !email || !phone) {
         throw new ApiError(400, "All fields are required.");
     }
 
@@ -328,6 +328,7 @@ module.exports.updateUserProfile = async ( req , res )=> {
             $set : {
                 displayName : displayName,
                 email : email,
+                phone : phone
             }
         },
         {
@@ -371,11 +372,13 @@ module.exports.updateUserAvatar = async ( req, res )=> {
         throw new ApiError(400, "Avatar file is missing");
     }
 
-    if(!req.user.avatar) {
+    if(!req.user) {
         throw new ApiError(400, "Logged in user not found");
     }
 
-    await removeFromCloudinary(req.user.avatar);
+    if(req.user?.avatar) {
+        await removeFromCloudinary(req.user?.avatar);
+    }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
 
@@ -413,11 +416,13 @@ module.exports.updateUserCoverImage = async ( req , res )=> {
         throw new ApiError(400, "Cover image file is missing");
     }
 
-    if(!req.user.coverImage) {
+    if(!req.user) {
         throw new ApiError(400, "Logged in user not found");
     }
 
-    await removeFromCloudinary(req.user.coverImage);
+    if(req.user?.coverImage !== "") {
+        await removeFromCloudinary(req.user?.coverImage);
+    }
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 

@@ -15,9 +15,9 @@ export default function Sidebar() {
         { name: "Home", path: "/", icon: <FaHome /> },
         currUser?.role === "EquipmentOwner" && { name: "My Equipments", path: `${currUser._id}/my-equipments`, icon: <FaTractor /> },
         currUser?._id && { name: "My Bookings", path: `/${currUser._id}/my-bookings`, icon: <FaClipboardList /> },
-        { name: "Recently Viewed", path: "/recently-viewed-items", icon: <MdViewInAr /> },
-        { name: "Profile", path: "/profile", icon: <FaUserCircle /> },
-    ].filter(Boolean); //  Remove `null` values (if condition fails)
+        currUser?._id && { name: "Recently Viewed", path: "/recently-viewed-items", icon: <MdViewInAr /> },
+        currUser?._id && { name: "Profile", path: `/profile/${currUser._id}`, icon: <FaUserCircle /> },
+    ].filter(Boolean);
 
     return (
         <aside className={`bg-gray-100 dark:bg-gray-900 z-40 h-full w-64 p-4 fixed top-0 left-0 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
