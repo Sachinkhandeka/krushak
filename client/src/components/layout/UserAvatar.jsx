@@ -12,27 +12,27 @@ export default function UserAvatar({ user }) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState({ type : "", message : "" });
+    const [alert, setAlert] = useState({ type: "", message: "" });
 
     const handleSignout = async () => {
-        setLoading(true); // Set loading state before making the request
+        setLoading(true);
         try {
             const response = await fetchWithAuth(
-                "/api/v1/users/logout", 
+                "/api/v1/users/logout",
                 { method: "POST" },
                 setLoading,
                 setAlert,
                 navigate
             );
 
-            if(response) {
+            if (response) {
                 dispatch(signoutSuccess());
             }
             navigate("/");
         } catch (error) {
             console.log(error.message);
         } finally {
-            setLoading(false); // Reset loading state
+            setLoading(false);
         }
     };
 
@@ -63,12 +63,26 @@ export default function UserAvatar({ user }) {
             {/* Dropdown */}
             {isOpen && user && (
                 <div
-                    className="absolute top-12 right-0 bg-white dark:bg-gray-800 shadow-xl rounded-lg w-72 p-5 z-50 border border-gray-200 dark:border-gray-700 transition-all duration-200"
+                    className="absolute top-12 right-0 bg-white dark:bg-gray-800 shadow-xl rounded-lg w-80 z-50 border border-gray-200 dark:border-gray-700 transition-all duration-200 overflow-hidden"
                     onMouseEnter={() => setIsOpen(true)}
                     onMouseLeave={() => setIsOpen(false)}
                 >
-                    <div className="flex items-center gap-4 pb-3 border-b border-gray-300 dark:border-gray-700">
-                        <div className="w-14 h-14 flex items-center justify-center overflow-hidden bg-gray-300 rounded-full dark:bg-gray-700">
+                    {/* Cover Image */}
+                    <div className="relative w-full h-20">
+                        {user.coverImage ? (
+                            <img
+                                src={user.coverImage}
+                                alt="Cover"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gradient-to-r from-green-500 to-blue-500" />
+                        )}
+                    </div>
+
+                    {/* User Info */}
+                    <div className="relative px-5 pt-5 pb-4 -mt-10 flex items-center gap-4">
+                        <div className="w-16 h-16 flex items-center justify-center overflow-hidden bg-gray-300 rounded-full dark:bg-gray-700 border-4 border-white dark:border-gray-900 shadow-md">
                             {user.avatar ? (
                                 <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                             ) : (
@@ -77,30 +91,36 @@ export default function UserAvatar({ user }) {
                                 </span>
                             )}
                         </div>
-                        <div>
-                            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{user.displayName}</h3>
+                        <div className="my-4" >
+                            <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{user.displayName}</h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">{user.role}</p>
                         </div>
                     </div>
-                    <ul className="mt-3 space-y-2 text-gray-700 dark:text-gray-300">
-                        <li className="flex justify-between">
-                            <span className="font-medium text-gray-600 dark:text-gray-400">Email:</span>
-                            <span className="truncate">{user.email}</span>
-                        </li>
-                        <li className="flex justify-between">
-                            <span className="font-medium text-gray-600 dark:text-gray-400">Username:</span>
-                            <span className="truncate">{user.username}</span>
-                        </li>
-                        <li className="flex justify-between">
-                            <span className="font-medium text-gray-600 dark:text-gray-400">Phone:</span>
-                            <span>{user.phone}</span>
-                        </li>
-                    </ul>
-                    <div className="mt-4 flex w-full">
-                        <button 
-                            className="px-4 py-2 cursor-pointer flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-all disabled:opacity-50"
+
+                    {/* User Details */}
+                    <div className="px-5 py-2 border-t border-gray-200 dark:border-gray-700">
+                        <ul className="text-gray-700 dark:text-gray-300 space-y-2">
+                            <li className="flex justify-between">
+                                <span className="font-medium text-gray-600 dark:text-gray-400">Email:</span>
+                                <span className="truncate">{user.email}</span>
+                            </li>
+                            <li className="flex justify-between">
+                                <span className="font-medium text-gray-600 dark:text-gray-400">Username:</span>
+                                <span className="truncate">{user.username}</span>
+                            </li>
+                            <li className="flex justify-between">
+                                <span className="font-medium text-gray-600 dark:text-gray-400">Phone:</span>
+                                <span>{user.phone}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Logout Button */}
+                    <div className="px-5 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+                        <button
+                            className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold transition-all disabled:opacity-50"
                             onClick={handleSignout}
-                            disabled={loading} // Disable button while loading
+                            disabled={loading}
                         >
                             {loading ? <Loader size={15} color="white" variant="dots" /> : <FiLogOut size={16} />}
                             <span>{loading ? "Logging out..." : "Logout"}</span>
