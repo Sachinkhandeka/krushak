@@ -8,23 +8,41 @@ const EquipmentInfo = ({ equipment, owner, pricing, availability, category, type
     const [loading, setLoading] = useState(false);
     const [showBookingModal, setShowBookingModal] = useState(false);
     return (
-        <div className="w-full md:w-2/5 bg-white dark:bg-gray-900  p-6 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700">
-            {/*  Owner Information */}
-            <div className="flex items-center gap-4 border-b border-gray-300 pb-4 mb-4 dark:border-gray-700">
-                { owner.avatar !== "" ? (
-                    <img 
-                        src={owner?.avatar || "/default-avatar.png"} 
-                        alt={owner?.displayName || "Owner"} 
-                        className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-600"
-                    />
-                ) : (
-                    <span className="w-12 h-12 rounded-full flex items-center justify-center object-cover text-gray-400 dark:text-gray-600 border border-gray-300 dark:border-gray-600" >
-                        <PiUserLight size={42} />
-                    </span>
-                ) }
-                <div>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">{owner.displayName}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{owner.email}</p>
+        <div className="w-full md:w-2/5 bg-white dark:bg-gray-900  p-4 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700">
+            {/* Owner Information with Cover Image */}
+            <div className="relative w-full">
+                {/* Cover Image */}
+                <div className="relative w-full h-24 md:h-28 rounded-md">
+                    {owner.coverImage ? (
+                        <img 
+                            src={owner.coverImage} 
+                            alt="Owner Cover" 
+                            className="w-full h-full object-cover rounded-md"
+                        />
+                    ) : (
+                        <div className="w-full h-full rounded-md bg-gradient-to-r from-green-500 to-blue-500" />
+                    )}
+                </div>
+
+                {/* User Info */}
+                <div className="relative px-5 pt-5 pb-4 -mt-10 flex items-center gap-4">
+                    <div className="w-16 h-16 flex items-center justify-center overflow-hidden bg-gray-300 rounded-full dark:bg-gray-700 border-4 border-white dark:border-gray-900 shadow-md">
+                        {owner.avatar ? (
+                            <img 
+                                src={owner.avatar} 
+                                alt={owner.displayName || "Owner"} 
+                                className="w-full h-full object-cover rounded-full"
+                            />
+                        ) : (
+                            <span className="text-xl font-semibold text-gray-800 dark:text-gray-300">
+                                {owner.displayName[0].toUpperCase()}
+                            </span>
+                        )}
+                    </div>
+                    <div className="my-4">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{owner.displayName}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{owner.role}</p>
+                    </div>
                 </div>
             </div>
 

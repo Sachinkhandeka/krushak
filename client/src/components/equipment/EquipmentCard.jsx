@@ -119,8 +119,8 @@ const EquipmentCard = ({ item, setAlert }) => {
                 <div className="flex items-center gap-2 mt-3">
                     { item.owner.avatar !== "" ? (
                         <img 
-                            src={item.ownerContact?.avatar || "/default-avatar.png"} 
-                            alt={item.ownerContact?.displayName || "Owner"} 
+                            src={item.owner?.avatar} 
+                            alt={item.owner?.displayName || "Owner"} 
                             className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-600"
                         />
                     ) : (

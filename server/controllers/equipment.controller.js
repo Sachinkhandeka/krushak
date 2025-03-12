@@ -394,7 +394,7 @@ module.exports.getOneEquipment = async ( req , res )=> {
     const { id } = req.params ; 
 
     // Find Equipment
-    const equipment = await Equipment.findById(id).populate("owner", "displayName username email avatar");
+    const equipment = await Equipment.findById(id).populate("owner", "displayName username role avatar coverImage");
 
     if(!equipment) {
         throw new ApiError(403, "Equipment you are trying to find does not exists or deleted");
