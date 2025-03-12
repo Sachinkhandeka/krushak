@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import ProfileHeader from "../components/common/ProfileHeader";
 import ProfileDetails from "../components/common/ProfileDetails";
 import ChangePassword from "../components/common/ChangePassword";
-import Alert from "../components/utils/Alert";
+
+const Alert = React.lazy(()=> import("../components/utils/Alert"));
 
 
 const UserProfile = () => {

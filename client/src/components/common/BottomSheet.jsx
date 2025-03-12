@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import EquipmentList from "../equipment/EquipmentList";
+
+const EquipmentList = React.lazy(()=> import("../equipment/EquipmentList"));
 
 const BottomSheet = ({ equipmentResults, setAlert }) => {
-    const [isExpanded, setIsExpanded] = useState(false); // Start collapsed
+    const [isExpanded, setIsExpanded] = useState(false); 
     const bottomSheetRef = useRef(null);
     const dragHandleRef = useRef(null);
 
@@ -12,7 +13,7 @@ const BottomSheet = ({ equipmentResults, setAlert }) => {
 
         let startY, currentY;
         const minHeight = window.innerHeight * 0.1; 
-        const maxHeight = window.innerHeight * 0.85; // 85vh for expanded
+        const maxHeight = window.innerHeight * 0.85; 
 
         const startDrag = (y) => {
             startY = y;

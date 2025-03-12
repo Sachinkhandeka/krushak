@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import EquipmentList from "../components/equipment/EquipmentList";
-import SearchAndFilterWrapper from "../components/searchandfilter/SearchAndFilterWrapper";
 import Alert from "../components/utils/Alert";
-import NearbyEquipmentMap from "../components/common/NearbyEquipmentMap";
+
+const SearchAndFilterWrapper = React.lazy(()=> import("../components/searchandfilter/SearchAndFilterWrapper"));
 const BottomSheet = React.lazy(()=> import("../components/common/BottomSheet"));
+const NearbyEquipmentMap = React.lazy(()=> import("../components/common/NearbyEquipmentMap"));
+const EquipmentList = React.lazy(()=> import("../components/equipment/EquipmentList"));
 
 const Home = () => {
     const [equipmentResults, setEquipmentResults] = useState([]);

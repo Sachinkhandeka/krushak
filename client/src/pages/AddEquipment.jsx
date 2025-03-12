@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/utils/Loader";
 import Alert from "../components/utils/Alert";
 import Stepper from "../components/common/Stepper";
-import StepOneEquipment from "../components/common/StepOneEquipment";
-import StepTwoEquipment from "../components/common/StepTwoEquipment";
-import StepFourMediaUpload from "../components/common/StepFourMediaUpload";
+
+const StepOneEquipment = React.lazy(()=> import("../components/common/StepOneEquipment"))
+const StepTwoEquipment = React.lazy(()=> import("../components/common/StepTwoEquipment"));
+const StepFourMediaUpload = React.lazy(()=> import("../components/common/StepFourMediaUpload"));
 
 const units = ['hour (કલાક)', 'day (દિવસ)', 'week (અઠવાડિયું)', 'quantity (જથ્થો)', 'other (અન્ય)'];
 

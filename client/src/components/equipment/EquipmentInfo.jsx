@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FaRupeeSign, FaCheckCircle } from "react-icons/fa";
-import { PiUserLight } from "react-icons/pi";
 import Loader from "../utils/Loader";
-import BookingComponent from "../booking/BookingComponent";
+
+const BookingComponent = React.lazy(()=> import("../booking/BookingComponent"));
 
 const EquipmentInfo = ({ equipment, owner, pricing, availability, category, type, model, year, condition, description }) => {
     const [loading, setLoading] = useState(false);

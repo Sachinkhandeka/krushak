@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Loader from "../utils/Loader.jsx";
-import NoDataFound from "../common/NoDataFound.jsx";
 import { fetchWithAuth } from "../../utilityFunction.js";
 import { Link } from "react-router-dom";
 import OwnerEquipmentCard from "./OwnerEquipmentCard.jsx";
+
+const NoDataFound = React.lazy(()=> import("../common/NoDataFound.jsx"))
 
 const OwnerEquipmentList = () => {
     const [equipments, setEquipments] = useState([]);

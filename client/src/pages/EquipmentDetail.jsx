@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/utils/Loader";
 import { fetchWithAuth } from "../utilityFunction";
-import EquipmentGallery from "../components/equipment/EquipmentGallery";
-import EquipmentInfo from "../components/equipment/EquipmentInfo";
-import EquipmentLocation from "../components/equipment/EquipmentLocation";
-import MapComponent from "../components/common/MapComponent";
 import { RiUserLocationLine } from "react-icons/ri";
 import Alert from "../components/utils/Alert";
+
+const EquipmentGallery = React.lazy(()=> import("../components/equipment/EquipmentGallery"));
+const EquipmentInfo = React.lazy(()=> import("../components/equipment/EquipmentInfo"));
+const EquipmentLocation = React.lazy(()=> import("../components/equipment/EquipmentLocation"));
+const MapComponent = React.lazy(()=> import("../components/common/MapComponent"));
 
 const EquipmentDetail = () => {
     const navigate = useNavigate();

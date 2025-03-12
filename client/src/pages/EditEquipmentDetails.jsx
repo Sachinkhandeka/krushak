@@ -3,12 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/utils/Loader";
 import Alert from "../components/utils/Alert";
 import { fetchWithAuth } from "../utilityFunction";
-import EditEquipmentGallery from "../components/equipment/EditEquipmentGallary";
-import EditEquipmentInfo from "../components/equipment/EditEquipmentInfo";
-import EditEquipmentLocation from "../components/equipment/EditEquipmentLocation";
-import MapComponent from "../components/common/MapComponent";
 import { RiUserLocationLine } from "react-icons/ri";
 import { FaPencilAlt, FaSave } from "react-icons/fa";
+
+const EditEquipmentGallery = React.lazy(()=> import("../components/equipment/EditEquipmentGallary"));
+const EditEquipmentInfo = React.lazy(()=> import("../components/equipment/EditEquipmentInfo"));
+const EditEquipmentLocation = React.lazy(()=> import("../components/equipment/EditEquipmentLocation"));
+const MapComponent = React.lazy(()=> import("../components/common/MapComponent"));
 
 const EditEquipmentDetails = () => {
     const navigate = useNavigate();

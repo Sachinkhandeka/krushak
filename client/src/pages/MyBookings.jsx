@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/utils/Loader";
-import NoDataFound from "../components/common/NoDataFound";
 import { fetchWithAuth } from "../utilityFunction";
-import BookingCard from "../components/booking/BookingCard";
-import { useSelector } from "react-redux"; // Import useSelector to access currUser
-import Alert from "../components/utils/Alert";
+import { useSelector } from "react-redux"; 
+
+const Alert = React.lazy(()=> import("../components/utils/Alert"));
+const BookingCard = React.lazy(()=> import("../components/booking/BookingCard"));
+const NoDataFound = React.lazy(()=> import("../components/common/NoDataFound"));
 
 const MyBookings = () => {
     const navigate = useNavigate();
-    const { currUser } = useSelector((state) => state.user); // Get current user from Redux
+    const { currUser } = useSelector((state) => state.user); 
     const [loading, setLoading] = useState(true);
     const [alert, setAlert] = useState({ type: "", message: "" });
     const [myBookings, setMyBookings] = useState([]);
