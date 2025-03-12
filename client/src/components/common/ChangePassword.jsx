@@ -1,17 +1,63 @@
 import React, { useState } from "react";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
+import { fetchWithAuth } from "../../utilityFunction";
+import Loader from "../utils/Loader";
+import { useNavigate } from "react-router-dom";
 
-const ChangePassword = () => {
+const ChangePassword = ({ setAlert }) => {
+    const navigate = useNavigate();
     const [passwords, setPasswords] = useState({ oldPassword: "", newPassword: "", confirmPassword: "" });
     const [showPassword, setShowPassword] = useState({ old: false, new: false, confirm: false });
+    const [loading, setLoading] = useState(false);
 
+    // Toggle Password Visibility
     const togglePasswordVisibility = (field) => {
         setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
     };
 
+    // Handle Input Change
+    const handleInputChange = (e) => {
+        setPasswords({ ...passwords, [e.target.name]: e.target.value });
+    };
+
+    // Handle Password Change Submission
+    const handleChangePassword = async () => {
+        if (!passwords.oldPassword || !passwords.newPassword || !passwords.confirmPassword) {
+            return setAlert({ type: "warning", message: "Please fill all password fields." });
+        }
+
+        if (passwords.newPassword !== passwords.confirmPassword) {
+            return setAlert({ type: "error", message: "New password and confirm password do not match." });
+        }
+
+        setLoading(true);
+        try {
+            const response = await fetchWithAuth(
+                "/api/v1/users/profile/change-password",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(passwords),
+                },
+                setLoading,
+                setAlert,
+                navigate
+            );
+
+            if (response) {
+                setAlert({ type: "success", message: "Password changed successfully!" });
+                setPasswords({ oldPassword: "", newPassword: "", confirmPassword: "" });
+            }
+        } catch (error) {
+            setAlert({ type: "error", message: error.message });
+        }
+    };
+
     return (
         <div className="mt-6 bg-white dark:bg-gray-800 p-5 border border-gray-200 dark:border-gray-600 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Change Password</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <FiLock /> Change Password
+            </h2>
 
             {/* Password Fields */}
             {["oldPassword", "newPassword", "confirmPassword"].map((field, index) => (
@@ -19,8 +65,14 @@ const ChangePassword = () => {
                     <input
                         type={showPassword[field] ? "text" : "password"}
                         name={field}
-                        placeholder={field === "oldPassword" ? "Old Password" : field === "newPassword" ? "New Password" : "Confirm New Password"}
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                        value={passwords[field]}
+                        onChange={handleInputChange}
+                        placeholder={
+                            field === "oldPassword" ? "Current Password" :
+                            field === "newPassword" ? "New Password" :
+                            "Confirm New Password"
+                        }
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
                     />
                     <button
                         type="button"
@@ -33,8 +85,12 @@ const ChangePassword = () => {
             ))}
 
             {/* Update Button */}
-            <button className="w-full py-3 mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all">
-                Update Password
+            <button
+                onClick={handleChangePassword}
+                className="w-full py-3 mt-4 cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2"
+                disabled={loading}
+            >
+                {loading ? <Loader size={18} color="white" /> : "Update Password"}
             </button>
         </div>
     );
