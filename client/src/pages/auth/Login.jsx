@@ -48,8 +48,8 @@ const Login = ({ onClose, switchToSignup }) => {
 
             dispatch(signinSuccess(result.data.user));
             setAlert({ type: "success", message: result.message });
-            navigate("/");
             setTimeout(() => {
+                navigate("/");
                 onClose();
             }, 4000);
         } catch (err) {
