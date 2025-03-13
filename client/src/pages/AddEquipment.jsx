@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/utils/Loader";
 import Alert from "../components/utils/Alert";
 import Stepper from "../components/common/Stepper";
+import { Helmet } from "react-helmet-async";
 
 const StepOneEquipment = React.lazy(()=> import("../components/common/StepOneEquipment"))
 const StepTwoEquipment = React.lazy(()=> import("../components/common/StepTwoEquipment"));
@@ -115,82 +116,118 @@ const AddEquipment = () => {
     }
 
     return (
-        <div className="w-full p-6 my-4 mx-1 bg-white dark:bg-gray-900 shadow-lg rounded-lg">
-            {/* Alert Message */}
-            <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
-                {alert && alert.message && (
-                    <Alert type={alert.type} message={alert.message} autoDismiss onClose={() => setAlert(null)} />
-                )}
-            </div>
+        <>
+            {/*  SEO-Optimized Metadata for Maximum Rankings */}
+            <Helmet>
+                <title>Rent Farm Equipment | Hire Tractors, Harvesters & More | krushak</title>
+                <meta 
+                    name="description" 
+                    content="List your farm equipment for rent with krushak. Rent out tractors, harvesters, and agricultural machinery to farmers in need. Get more earnings from your idle equipment." 
+                />
+                <meta 
+                    name="keywords" 
+                    content="rent farm equipment, hire tractor, agricultural machinery rental, farm tools rental, krushak rental, farm equipment hire, leasing farm tools, farming tools rent" 
+                />
 
-            {/* Stepper */}
-            <Stepper steps={steps} currentStep={step} />
+                {/* OpenGraph (For social media sharing) */}
+                <meta property="og:title" content="Rent Farm Equipment | Hire Tractors, Harvesters & More | krushak" />
+                <meta 
+                    property="og:description" 
+                    content="Earn extra by renting out your farm equipment. Farmers can find tractors, harvesters, and agricultural tools for hire on krushak." 
+                />
+                <meta property="og:image" content="https://res.cloudinary.com/dg840otuv/image/upload/v1741839605/krushak_logo_zllvhe.png" />
+                <meta property="og:url" content="https://www.krushak.co.in/register-equipment" />
+                <meta property="og:type" content="website" />
 
-            <h2 className="text-2xl font-bold my-6 text-gray-800 dark:text-gray-100">
-                Rent Your Equipment
-            </h2>
+                {/* Twitter Cards */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Earn by Renting Out Your Farm Equipment | krushak" />
+                <meta 
+                    name="twitter:description" 
+                    content="Make money by leasing tractors, harvesters, and agricultural tools. Farmers can rent your equipment easily via krushak." 
+                />
+                <meta name="twitter:image" content="https://res.cloudinary.com/dg840otuv/image/upload/v1741839605/krushak_logo_zllvhe.png" />
 
-            <form onSubmit={handleSubmit}>
-                {/* Step 1: Equipment Information */}
-                {step === 1 && (
-                    <StepOneEquipment formData={formData} handleChange={handleDetailChange} />
-                )}
+                {/* Canonical URL */}
+                <link rel="canonical" href="https://www.krushak.co.in/register-equipment" />
+            </Helmet>
+            <div className="w-full p-6 my-4 mx-1 bg-white dark:bg-gray-900 shadow-lg rounded-lg">
+                {/* Alert Message */}
+                <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
+                    {alert && alert.message && (
+                        <Alert type={alert.type} message={alert.message} autoDismiss onClose={() => setAlert(null)} />
+                    )}
+                </div>
 
-                {/* Step 2: Equipment Usage & Availability */}
-                {step === 2 && (
-                    <StepTwoEquipment formData={formData} handleChange={handleDetailChange} handleCropSelection={handleCropSelection} />
-                )}
+                {/* Stepper */}
+                <Stepper steps={steps} currentStep={step} />
 
-                {/* Step 3: Equipment Price */}
-                {step === 3 && (
-                    <>
-                        <h3 className="text-lg font-semibold mt-6 mb-2">Pricing</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <SelectInput label="Unit" value={formData.unit} onChange={handleDetailChange} name="unit" options={units} required />
-                            <TextInput label="Price" value={formData.price} onChange={handleDetailChange} name="price" placeholder="Enter Price" required />
+                <h2 className="text-2xl font-bold my-6 text-gray-800 dark:text-gray-100">
+                    Rent Your Equipment
+                </h2>
+
+                <form onSubmit={handleSubmit}>
+                    {/* Step 1: Equipment Information */}
+                    {step === 1 && (
+                        <StepOneEquipment formData={formData} handleChange={handleDetailChange} />
+                    )}
+
+                    {/* Step 2: Equipment Usage & Availability */}
+                    {step === 2 && (
+                        <StepTwoEquipment formData={formData} handleChange={handleDetailChange} handleCropSelection={handleCropSelection} />
+                    )}
+
+                    {/* Step 3: Equipment Price */}
+                    {step === 3 && (
+                        <>
+                            <h3 className="text-lg font-semibold mt-6 mb-2">Pricing</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <SelectInput label="Unit" value={formData.unit} onChange={handleDetailChange} name="unit" options={units} required />
+                                <TextInput label="Price" value={formData.price} onChange={handleDetailChange} name="price" placeholder="Enter Price" required />
+                            </div>
+                        </>
+                    )}
+
+                    {/* Navigation Buttons (Hide in Step 4) */}
+                    {step !== 4 && (
+                        <div className="flex justify-between mt-6">
+                            {step > 1 && (
+                                <button
+                                    type="button"
+                                    className="bg-gray-500 cursor-pointer text-white px-4 py-2 rounded-md"
+                                    onClick={() => setStep(step - 1)}
+                                >
+                                    Back
+                                </button>
+                            )}
+                            {step < 3 ? (
+                                <button
+                                    type="button"
+                                    className="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded-md"
+                                    onClick={() => setStep(step + 1)}
+                                >
+                                    Next
+                                </button>
+                            ) : (
+                                <button
+                                    type="submit"
+                                    className="bg-green-500 cursor-pointer text-white px-4 py-2 rounded-md"
+                                    disabled={loading}
+                                >
+                                    {loading ? <Loader size={18} color="white" variant="dots" /> : "Submit"}
+                                </button>
+                            )}
                         </div>
-                    </>
-                )}
-
-                {/* Navigation Buttons (Hide in Step 4) */}
-                {step !== 4 && (
-                    <div className="flex justify-between mt-6">
-                        {step > 1 && (
-                            <button
-                                type="button"
-                                className="bg-gray-500 cursor-pointer text-white px-4 py-2 rounded-md"
-                                onClick={() => setStep(step - 1)}
-                            >
-                                Back
-                            </button>
-                        )}
-                        {step < 3 ? (
-                            <button
-                                type="button"
-                                className="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded-md"
-                                onClick={() => setStep(step + 1)}
-                            >
-                                Next
-                            </button>
-                        ) : (
-                            <button
-                                type="submit"
-                                className="bg-green-500 cursor-pointer text-white px-4 py-2 rounded-md"
-                                disabled={loading}
-                            >
-                                {loading ? <Loader size={18} color="white" variant="dots" /> : "Submit"}
-                            </button>
-                        )}
-                    </div>
-                )}
+                    )}
 
                 
-                {/* Step 4: Equipment Media */}
-                {step === 4 && (
-                    <StepFourMediaUpload equipmentId={equipmentId} navigate={navigate} />
-                )}
-            </form>
-        </div>
+                    {/* Step 4: Equipment Media */}
+                    {step === 4 && (
+                        <StepFourMediaUpload equipmentId={equipmentId} navigate={navigate} />
+                    )}
+                </form>
+            </div>
+        </>
     );
 };
 

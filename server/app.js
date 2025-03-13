@@ -3,9 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const helmet = require("helmet");
 const compression = require("compression");
-const { getMetadataForRoute } = require("./utils/seo.js"); 
+const { getMetadataForRoute } = require("./utils/seo.js");
 const ApiError = require("./utils/apiError.js");
 
 // Import Routes
@@ -16,18 +15,19 @@ const sitemapRoutes = require("./routes/sitemap.routes");
 
 const app = express();
 
-//  Security & Performance Middleware
-app.use(helmet()); // Protects against common security threats
-app.use(compression()); // Enables Gzip compression for faster load times
+app.use(compression());
+
+//  CORS Configuration
 app.use(
     cors({
         origin: process.env.CORS_ORIGIN.split(","), 
-        credentials: true, 
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], 
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+        allowedHeaders: ["Content-Type", "Authorization"], 
     })
 );
 
-//  Middleware for parsing JSON & handling cookies
+//  Middleware for JSON & Cookies
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 app.use(cookieParser());
@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, "../client/dist"), {
     etag: false
 }));
 
-//  API Routes
+// API Routes
 app.use("/", sitemapRoutes);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/equipment", equipmentRouter);
@@ -54,32 +54,24 @@ app.get("*", (req, res, next) => {
             return next(new ApiError(500, "Internal Server Error"));
         }
 
-        //  Get dynamic SEO metadata based on route
+        // Get dynamic SEO metadata based on route
         const metadata = getMetadataForRoute(req.originalUrl);
 
-        //  Inject SEO-friendly meta tags into HTML
-        const finalHtml = html
-            .replace("<title>Krushak</title>", `<title>${metadata.title}</title>`)
-            .replace(
-                '<meta name="description" content="">',
-                `<meta name="description" content="${metadata.description}">`
-            )
-            .replace(
-                '<meta property="og:title" content="">',
-                `<meta property="og:title" content="${metadata.title}">`
-            )
-            .replace(
-                '<meta property="og:description" content="">',
-                `<meta property="og:description" content="${metadata.description}">`
-            )
-            .replace(
-                '<meta property="og:image" content="">',
-                `<meta property="og:image" content="${metadata.logo}">`
-            )
-            .replace(
-                '<meta property="og:url" content="">',
-                `<meta property="og:url" content="${metadata.url}${req.originalUrl}">`
-            );
+        // Ensure meta tags exist before replacing
+        let finalHtml = html;
+
+        if (metadata.title) {
+            finalHtml = finalHtml.replace(/<title>.*<\/title>/, `<title>${metadata.title}</title>`);
+        }
+        if (metadata.description) {
+            finalHtml = finalHtml.replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${metadata.description}">`);
+        }
+        if (metadata.logo) {
+            finalHtml = finalHtml.replace(/<meta property="og:image" content=".*?">/, `<meta property="og:image" content="${metadata.logo}">`);
+        }
+        if (metadata.url) {
+            finalHtml = finalHtml.replace(/<meta property="og:url" content=".*?">/, `<meta property="og:url" content="${metadata.url}${req.originalUrl}">`);
+        }
 
         res.send(finalHtml);
     });

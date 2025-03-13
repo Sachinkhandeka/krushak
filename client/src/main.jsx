@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import App from "./App.jsx";
 import { persistor, store } from "./redux/store.js";
@@ -14,25 +15,29 @@ if (rootElement.hasChildNodes()) {
     hydrateRoot(
         rootElement,
         <StrictMode>
-            <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
-                    <ThemeProvider>
-                        <App />  
-                    </ThemeProvider>
-                </PersistGate>
-            </Provider>
+            <HelmetProvider>
+                <Provider store={store}>
+                    <PersistGate loading={null} persistor={persistor}>
+                        <ThemeProvider>
+                            <App />  
+                        </ThemeProvider>
+                    </PersistGate>
+                </Provider>
+            </HelmetProvider>
         </StrictMode>
     );
 } else {
     createRoot(rootElement).render(
         <StrictMode>
-            <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
-                    <ThemeProvider>
-                        <App />  
-                    </ThemeProvider>
-                </PersistGate>
-            </Provider>
+            <HelmetProvider>
+                <Provider store={store}>
+                    <PersistGate loading={null} persistor={persistor}>
+                        <ThemeProvider>
+                            <App />  
+                        </ThemeProvider>
+                    </PersistGate>
+                </Provider>
+            </HelmetProvider>
         </StrictMode>
     );
 }

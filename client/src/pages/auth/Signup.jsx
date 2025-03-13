@@ -5,8 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signinStart, signinSuccess, signinFailure } from "../../redux/slices/userSlice";
 import Loader from "../../components/utils/Loader";
-import SignupWithGoogle from "./SignupWithGoogle";
 import Alert from "../../components/utils/Alert";
+import { Helmet } from "react-helmet-async";
+
+const SignupWithGoogle = React.lazy(()=> import("./SignupWithGoogle"));
 
 const Signup = ({ onClose, switchToLogin }) => {
     const dispatch = useDispatch();
@@ -73,6 +75,38 @@ const Signup = ({ onClose, switchToLogin }) => {
     };
 
     return (
+        <>
+        {/* 🚀 SEO-Optimized Meta Tags */}
+        <Helmet>
+            <title>Sign Up | krushak - Rent Farm Equipment Easily</title>
+            <meta
+                name="description"
+                content="Join krushak and start renting or listing farm equipment like tractors, rotavators, and agricultural tools at affordable prices. Sign up today!"
+            />
+            <meta
+                name="keywords"
+                content="krushak signup, rent farm equipment, hire tractors, rent agricultural tools, lease farming machines, agriculture rental platform"
+            />
+            <meta property="og:title" content="Sign Up | krushak - Rent Farm Equipment Easily" />
+            <meta
+                property="og:description"
+                content="Sign up on krushak and connect with farmers to rent or list agricultural equipment. Hassle-free rentals at affordable rates."
+            />
+            <meta
+                property="og:image"
+                content="https://res.cloudinary.com/dg840otuv/image/upload/v1741839605/krushak_logo_zllvhe.png"
+            />
+            <meta property="og:url" content="https://www.krushak.co.in/signup" />
+            <meta property="twitter:title" content="Sign Up | krushak - Rent Farm Equipment Easily" />
+            <meta
+                property="twitter:description"
+                content="Register with krushak to rent or list farm equipment, tractors, and agricultural tools at the best prices. Start now!"
+            />
+            <meta
+                property="twitter:image"
+                content="https://res.cloudinary.com/dg840otuv/image/upload/v1741839605/krushak_logo_zllvhe.png"
+            />
+        </Helmet>
         <div className="relative bg-white text-black w-full max-w-md mx-4 p-6 rounded-lg shadow-lg sm:max-w-md md:max-w-xl max-h-[85%] overflow-y-scroll">
             {/* alert message */}
             <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
@@ -202,6 +236,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                 </Link>
             </p>
         </div>
+        </>
     );
 };
 
