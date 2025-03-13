@@ -3,7 +3,7 @@ const User = require("../models/user");
 const Booking = require("../models/booking");
 const ApiError = require("../utils/apiError");
 
-const baseURL = "krushak.co.in";
+const baseURL = "https://krushak.co.in";
 
 module.exports.generateSitemap = async (req, res) => {
     try {
