@@ -69,7 +69,7 @@ const Home = () => {
                     <>
                         {/* Map Section */}
                         <div className="w-full">
-                            <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-lg overflow-hidden">
+                            <div className="w-full h-[500px] sm:h-[500px] lg:h-[500px] rounded-lg overflow-hidden">
                                 <NearbyEquipmentMap {...mapData} />
                             </div>
                         </div>
