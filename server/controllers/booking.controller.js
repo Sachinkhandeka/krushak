@@ -98,7 +98,7 @@ module.exports.cancelBooking = async (req, res) => {
         throw new ApiError(404, "Booking not found");
     }
 
-    if (booking.user._id.toString() !== userId.toString()) {
+    if (booking.owner._id.toString() !== userId.toString()) {
         throw new ApiError(403, "You are not authorized to cancel this booking");
     }
 

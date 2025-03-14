@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { FaPhoneAlt, FaMapMarkerAlt, FaRupeeSign } from "react-icons/fa";
+import { FaPhoneAlt, FaRupeeSign } from "react-icons/fa";
 import { MdPending, MdCheckCircle, MdCancel, MdTrackChanges, MdDone } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { fetchWithAuth } from "../../utilityFunction";
 import { useNavigate } from "react-router-dom";
-import Modal from "../common/Modal"; // Importing the modal
+import Modal from "../common/Modal";
 
 // Color-coded status mapping
 const statusColors = {
@@ -24,7 +24,7 @@ const statusIcons = {
     Cancelled: <MdCancel />,
 };
 
-const BookingCard = ({ booking, setAlert }) => {
+const BookingCard = ({ booking, setAlert, setIsBookingUpdated }) => {
     const navigate = useNavigate();
     const { currUser } = useSelector((state) => state.user);
     const { equipment, owner, status, createdAt } = booking;
@@ -46,6 +46,7 @@ const BookingCard = ({ booking, setAlert }) => {
 
     // Handle Confirm Booking
     const handleConfirmBooking = async () => {
+        setLoading(true);
         try {
             const result = await fetchWithAuth(
                 `/api/v1/bookings/${booking._id}/confirm`, 
@@ -57,20 +58,23 @@ const BookingCard = ({ booking, setAlert }) => {
 
             if (result) {
                 setAlert({ type: "success", message: "Booking confirmed successfully!" });
+                setIsBookingUpdated();
             }
         } catch (error) {
             setAlert({ type: "error", message: "Failed to confirm booking." });
         } finally {
             handleModalClose();
+            setLoading(false);
         }
     };
 
     // Handle Cancel Booking
     const handleCancelBooking = async () => {
+        setLoading(true);
         try {
             const result = await fetchWithAuth(
                 `/api/v1/bookings/${booking._id}/cancel`, 
-                { method: "PUT" },
+                { method: "PATCH" },
                 setLoading,
                 setAlert,
                 navigate
@@ -78,11 +82,13 @@ const BookingCard = ({ booking, setAlert }) => {
 
             if (result) {
                 setAlert({ type: "success", message: "Booking rejected successfully!" });
+                setIsBookingUpdated();
             }
         } catch (error) {
             setAlert({ type: "error", message: "Failed to reject booking." });
         } finally {
             handleModalClose();
+            setLoading(false);
         }
     };
 
@@ -124,10 +130,12 @@ const BookingCard = ({ booking, setAlert }) => {
                 <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">
                     {currUser.role === "EquipmentOwner" ? "User Details" : "Owner Details"}
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                    <FaPhoneAlt className="text-green-500" />
-                    {currUser.role === "EquipmentOwner" ? booking.user?.phone || "N/A" : booking.owner?.phone || "N/A"}
-                </p>
+                {booking.status !== "Cancelled" && (
+                    <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                        <FaPhoneAlt className="text-green-500" />
+                        {currUser.role === "EquipmentOwner" ? booking.user?.phone || "N/A" : booking.owner?.phone || "N/A"}
+                    </p>
+                )}
                 <p className="text-gray-600 dark:text-gray-400">
                     {currUser.role === "EquipmentOwner" ? booking.user?.displayName || "N/A" : booking.owner?.displayName || "N/A"}
                 </p>
@@ -144,13 +152,24 @@ const BookingCard = ({ booking, setAlert }) => {
             <p className="text-gray-500 my-4 px-6 text-sm mt-2">Booked on: {new Date(booking.createdAt).toLocaleDateString()}</p>
 
             {/* Confirm & Cancel Buttons (Only for Equipment Owners) */}
-            {currUser.role === "EquipmentOwner" && status === "Pending" && (
+            {currUser.role === "EquipmentOwner" && (
                 <div className="mt-4 px-6 pb-4 flex gap-4">
-                    <button onClick={() => handleModalOpen("confirm")} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                        Confirm
+                    <button
+                        onClick={() => handleModalOpen("confirm")}
+                        disabled={booking.status === "Confirmed"}
+                        className={`px-4 py-2 cursor-pointer rounded-md transition 
+                            ${booking.status === "Confirmed" ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"}`}
+                    >
+                        {booking.status === "Confirmed" ? "Confirmed" : "Confirm"}
                     </button>
-                    <button onClick={() => handleModalOpen("reject")} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
-                        Reject
+
+                    <button
+                        onClick={() => handleModalOpen("reject")}
+                        disabled={booking.status === "Cancelled"}
+                        className={`px-4 py-2 cursor-pointer rounded-md transition 
+                            ${booking.status === "Cancelled" ? "bg-gray-400 cursor-not-allowed" : "bg-red-600 hover:bg-red-700 text-white"}`}
+                    >
+                        {booking.status === "Cancelled" ? "Rejected" : "Reject"}
                     </button>
                 </div>
             )}
@@ -164,6 +183,7 @@ const BookingCard = ({ booking, setAlert }) => {
                 message={modalType === "confirm" ? "Are you sure you want to confirm this booking?" : "Are you sure you want to reject this booking?"}
                 confirmText={modalType === "confirm" ? "Confirm" : "Reject"}
                 cancelText="Cancel"
+                loading={loading}
             />
         </div>
     );

@@ -14,6 +14,7 @@ const MyBookings = () => {
     const [loading, setLoading] = useState(true);
     const [alert, setAlert] = useState({ type: "", message: "" });
     const [myBookings, setMyBookings] = useState([]);
+    const [isBookingUpdate, setIsBookingUpdated] = useState(false);
 
     useEffect(() => {
         const getBookings = async () => {
@@ -43,11 +44,12 @@ const MyBookings = () => {
                 setAlert({ type: "error", message: error.message });
             } finally {
                 setLoading(false);
+                setIsBookingUpdated(false);
             }
         };
 
         getBookings();
-    }, [navigate, currUser]); // Include currUser as a dependency
+    }, [navigate, currUser, isBookingUpdate]); 
 
     if (loading) {
         return (
@@ -86,7 +88,7 @@ const MyBookings = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
                 {myBookings.map((booking) => (
-                    <BookingCard key={booking._id} booking={booking}  setAlert={setAlert} />
+                    <BookingCard key={booking._id} booking={booking}  setAlert={setAlert} setIsBookingUpdated={()=> setIsBookingUpdated(true)} />
                 ))}
             </div>
         </section>

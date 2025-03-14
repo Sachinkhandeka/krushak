@@ -1,6 +1,7 @@
 import React from "react";
+import Loader from "../utils/Loader";
 
-const Modal = ({ isOpen, onClose, onConfirm, title, message, confirmText, cancelText }) => {
+const Modal = ({ isOpen, onClose, onConfirm, title, message, confirmText, cancelText, loading }) => {
     if (!isOpen) return null;
 
     return (
@@ -17,9 +18,13 @@ const Modal = ({ isOpen, onClose, onConfirm, title, message, confirmText, cancel
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                        className="px-4 py-2 cursor-pointer bg-green-600 text-white rounded-md hover:bg-green-700"
+                        disabled={loading}
                     >
-                        {confirmText || "Confirm"}
+                        {
+                        loading ? 
+                        <Loader size={15} color="white" variant="dots" /> :
+                        confirmText || "Confirm" }
                     </button>
                 </div>
             </div>
