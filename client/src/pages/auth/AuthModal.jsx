@@ -19,7 +19,7 @@ const AuthModal = () => {
             ></div>
 
             {/* Render Login or Signup Modal Based on URL */}
-            {isLogin ? <Login onClose={() => navigate(-1)} /> : <Signup onClose={() => navigate(-1)} />}
+            {isLogin ? <Login onClose={navigate} /> : <Signup onClose={navigate} />}
         </div>
     );
 };

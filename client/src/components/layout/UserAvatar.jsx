@@ -45,10 +45,10 @@ export default function UserAvatar({ user }) {
                     onMouseEnter={() => setIsOpen(true)}
                 >
                     {user.avatar ? (
-                        <img src={user.avatar} alt="User Avatar" className="w-full h-full object-cover" />
+                        <img src={user?.avatar} alt="User Avatar" className="w-full h-full object-cover" />
                     ) : (
                         <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                            {user.displayName[0].toUpperCase()}
+                            {user.displayName ? user.displayName[0].toUpperCase() : 'N/A'}
                         </span>
                     )}
                 </div>

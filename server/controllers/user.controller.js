@@ -596,6 +596,41 @@ module.exports.toggleFavoriteEquipment = async (req, res) => {
     }
 }
 
+// get favorite equipments of current user
+exports.getFavoriteEquipments = async (req, res, next) => {
+    const user = req.user;
+        
+    if (!user || !user._id) {
+        throw new ApiError(401, "Unauthorized: Invalid user request");
+    }
+        
+    // Fetch the user and populate favorites with selected fields
+    const userWithFavorites = await User.findById(user._id)
+        .select("displayName favorites")
+        .populate({
+            path: "favorites",
+            select: "model year name images video category type condition pricing availabilityArea.district availabilityArea.state owner",
+            populate: {
+                path: "owner",
+                select: "displayName avatar"
+            }
+        });
+        
+    if (!userWithFavorites) {
+        throw new ApiError(404, "User not found");
+    }
+
+    return res.status(200)
+    .json(
+        new ApiResponse(
+            200,
+            { favorites : userWithFavorites.favorites },
+            "Users favorite equipments found successfully"
+        )
+    )
+
+};
+
 // Update Recently Viewed Equipment
 module.exports.updateRecentlyViewedEquipment = async (req, res) => {
     const { id, equipmentId } = req.params;

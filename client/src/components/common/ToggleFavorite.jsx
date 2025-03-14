@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { fetchWithAuth } from "../../utilityFunction";
@@ -11,6 +11,11 @@ const ToggleFavorite = ({ itemId, isInitiallyFavorite, setAlert }) => {
     const [isFavorite, setIsFavorite] = useState(isInitiallyFavorite);
     const [animating, setAnimating] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // ✅ Sync state with updated props
+    useEffect(() => {
+        setIsFavorite(isInitiallyFavorite);
+    }, [isInitiallyFavorite]);
 
     const handleFavoriteToggle = async (e) => {
         e.stopPropagation();
@@ -55,7 +60,7 @@ const ToggleFavorite = ({ itemId, isInitiallyFavorite, setAlert }) => {
                     animate={{ scale: animating ? [1.2, 1, 1.2] : 1, opacity: 1 }}
                     transition={{ duration: 0.4, ease: "easeInOut", repeat: animating ? Infinity : 0 }}
                 >
-                    <FaHeart className="text-red-500 text-2xl drop-shadow-lg" />
+                    <FaHeart className="text-red-500 text-3xl drop-shadow-lg" />
                 </motion.div>
             ) : (
                 <motion.div
@@ -63,7 +68,7 @@ const ToggleFavorite = ({ itemId, isInitiallyFavorite, setAlert }) => {
                     animate={{ scale: animating ? [1, 1.2, 1] : 1, opacity: 1 }}
                     transition={{ duration: 0.4, ease: "easeInOut", repeat: animating ? Infinity : 0 }}
                 >
-                    <FaRegHeart className="text-gray-700 text-2xl drop-shadow-lg" />
+                    <FaRegHeart className="text-gray-700 text-3xl drop-shadow-lg" />
                 </motion.div>
             )}
         </motion.button>

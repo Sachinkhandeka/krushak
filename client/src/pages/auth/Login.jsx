@@ -49,8 +49,7 @@ const Login = ({ onClose, switchToSignup }) => {
             dispatch(signinSuccess(result.data.user));
             setAlert({ type: "success", message: result.message });
             setTimeout(() => {
-                navigate("/");
-                onClose();
+                onClose("/");
             }, 4000);
         } catch (err) {
             dispatch(signinFailure(err.message));
@@ -89,7 +88,7 @@ const Login = ({ onClose, switchToSignup }) => {
                 </div>
 
                 <Link to={"/"}>
-                    <button onClick={onClose} className="absolute cursor-pointer top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                    <button onClick={()=> onClose(-1)} className="absolute cursor-pointer top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
                         <IoClose size={24} />
                     </button>
                 </Link>

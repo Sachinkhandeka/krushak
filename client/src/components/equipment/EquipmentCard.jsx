@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../utils/Loader";
 import BookingComponent from "../booking/BookingComponent";
 import ToggleFavorite from "../common/ToggleFavorite";
 import { PiUserLight } from "react-icons/pi";
 import { useSelector } from "react-redux";
+import { fetchWithAuth } from "../../utilityFunction";
 
 const EquipmentCard = ({ item, setAlert }) => {
     const { currUser } = useSelector( state => state.user );
@@ -13,6 +14,36 @@ const EquipmentCard = ({ item, setAlert }) => {
     const [showAvailability, setShowAvailability] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showBookingModal, setShowBookingModal] = useState(false);
+    const [favoriteEquipments, setFavoriteEquipments] = useState([]);
+    const [isFavorite, setIsFavorite] = useState(false);
+
+    const getUserFavoriteEquipments = async () => {
+        if (!currUser?._id) return;
+            try {
+                const response = await fetchWithAuth(
+                    `/api/v1/users/${currUser._id}/favorites`, 
+                    { method: "GET" },
+                    setLoading,
+                    setAlert,
+                    navigate
+                );
+    
+                if (response) {
+                    const favorites = response?.data?.favorites || [];
+                    setFavoriteEquipments(favorites);
+
+                    //  Set `isFavorite` when data is loaded
+                    setIsFavorite(favorites.some(fav => fav._id === item._id));
+                }
+            } catch (error) {
+                console.error("Error fetching favorite equipments:", error);
+                setAlert({ type: "error", message: "Failed to load favorite equipments." });
+            }
+        };
+    
+        useEffect(() => {
+            getUserFavoriteEquipments();
+        }, [currUser]);
 
     //  Function to handle navigation
     const handleCardClick = (e) => {
@@ -46,7 +77,7 @@ const EquipmentCard = ({ item, setAlert }) => {
             <div className="w-full h-72 bg-gray-200 dark:bg-gray-700 overflow-hidden">
                 <ToggleFavorite 
                     itemId={item._id} 
-                    isInitiallyFavorite={currUser && currUser.favorites ? currUser.favorites.includes(item._id) : false}
+                    isInitiallyFavorite={isFavorite}
                     setAlert={setAlert} 
                 />
                 {preview.includes(".mp4") ? (

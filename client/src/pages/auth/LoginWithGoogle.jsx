@@ -20,6 +20,11 @@ const LoginWithGoogle = ({ setAlert, onClose }) => {
                 dispatch(signinStart());
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
+
+                if(!user) {
+                    dispatch(signinFailure("Something went wrong while logging you with google"));
+                    return setAlert({ type : "error", message : "Something went wrong while logging you with google" });
+                }
     
                 // Extract necessary details
                     
@@ -42,12 +47,20 @@ const LoginWithGoogle = ({ setAlert, onClose }) => {
                 dispatch(signinSuccess(data.data.user));
                 setAlert({ type : "success", message : data.message });
                 setTimeout(() => {
-                    onClose();
+                    onClose("/");
                 }, 4000);            
-                navigate("/");
             } catch (err) {
-                dispatch(signinFailure(err.message));
-                setAlert({ type : "error", message : err.message });
+                let errorMessage = err.message;
+
+                // Handle specific Google sign-in errors
+                if (err.code === "auth/popup-closed-by-user") {
+                    errorMessage = "Google sign-in was canceled. Please try again.";
+                } else if (err.code === "auth/network-request-failed") {
+                    errorMessage = "Network error. Please check your internet connection.";
+                }
+
+                dispatch(signinFailure(errorMessage));
+                setAlert({ type: "error", message: errorMessage });
             }
     }
     return (

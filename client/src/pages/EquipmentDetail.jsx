@@ -45,7 +45,7 @@ const EquipmentDetail = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Loader size={50} color="blue" variant="dots" />
+                <Loader size={50} color="green" variant="dots" />
             </div>
         );
     }

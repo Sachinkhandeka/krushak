@@ -99,6 +99,13 @@ router.put(
     wrapAsync(user.toggleFavoriteEquipment),
 );
 
+// get current user favorite icons
+router.get(
+    "/:id/favorites",
+    verifyJwt,
+    wrapAsync(user.getFavoriteEquipments),
+);
+
 // Route to update recently viewed equipment
 router.put(
     "/:id/recently-viewed/:equipmentId",

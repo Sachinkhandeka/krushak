@@ -19,6 +19,7 @@ const MyEquipments = React.lazy(()=> import("./pages/MyEquipments.jsx"));
 const MyBookings = React.lazy(()=> import("./pages/MyBookings.jsx"));
 const EditEquipmentDetails = React.lazy(()=> import("./pages/EditEquipmentDetails.jsx"));
 const UserProfile = React.lazy(()=> import("./pages/UserProfile.jsx"));
+const Favorites = React.lazy(()=> import("./pages/Favorites.jsx"));
 
 const App = () => {
     const { isOpen } = useSelector((state) => state.sidebar);
@@ -151,6 +152,16 @@ const App = () => {
                                 <SuspenseWrapper>
                                     <PrivateRoute>
                                         <UserProfile />
+                                    </PrivateRoute>
+                                </SuspenseWrapper>
+                            }
+                        />
+                        <Route
+                            path="/:id/favorites"
+                            element={
+                                <SuspenseWrapper>
+                                    <PrivateRoute>
+                                        <Favorites />
                                     </PrivateRoute>
                                 </SuspenseWrapper>
                             }

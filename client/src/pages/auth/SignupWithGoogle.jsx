@@ -31,6 +31,11 @@ const SignupWithGoogle = ({ setAlert, onClose }) => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
+            if(!user) {
+                dispatch(signinFailure("Something went wrong while sign you up with google"));
+                return setAlert({ type : "error", message : "Something went wrong while sign you up with google" });
+            }
+
             const userInfo = {
                 displayName: user.displayName,
                 username: user.displayName ? generateUsername(user.displayName) : null,
@@ -52,8 +57,17 @@ const SignupWithGoogle = ({ setAlert, onClose }) => {
             // Proceed with API call if phone number exists
             await registerUser(userInfo);
         } catch (err) {
-            dispatch(signinFailure(err.message));
-            setAlert({ type: "error", message: err.message });
+            let errorMessage = err.message;
+
+            // Handle specific Google sign-in errors
+            if (err.code === "auth/popup-closed-by-user") {
+                errorMessage = "Google sign-up was canceled. Please try again.";
+            } else if (err.code === "auth/network-request-failed") {
+                errorMessage = "Network error. Please check your internet connection.";
+            }
+
+            dispatch(signinFailure(errorMessage));
+            setAlert({ type: "error", message: errorMessage });
         }
     };
 
@@ -76,9 +90,9 @@ const SignupWithGoogle = ({ setAlert, onClose }) => {
             setAlert({ type: "success", message: resData.message });
 
             setTimeout(() => {
-                onClose();
+                onClose("/");
             }, 4000);
-            navigate("/");
+    
         } catch (error) {
             dispatch(signinFailure(error.message));
             setAlert({ type: "error", message: error.message });

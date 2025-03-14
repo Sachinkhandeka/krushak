@@ -66,8 +66,7 @@ const Signup = ({ onClose, switchToLogin }) => {
 
             dispatch(signinSuccess(result.data.user));
             setAlert({ type : "success", message : result.message });
-            navigate("/");
-            onClose();
+            onClose("/");
         } catch (err) {
             dispatch(signinFailure(err.message));
             setAlert({ type : "error", message : err.message });
@@ -107,7 +106,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                 content="https://res.cloudinary.com/dg840otuv/image/upload/v1741839605/krushak_logo_zllvhe.png"
             />
         </Helmet>
-        <div className="relative bg-white text-black w-full max-w-md mx-4 p-6 rounded-lg shadow-lg sm:max-w-md md:max-w-xl max-h-[85%] overflow-y-scroll">
+        <div className="relative bg-white text-black w-full max-w-md mx-4 p-6 rounded-lg shadow-lg sm:max-w-md md:max-w-xl max-h-[85%] overflow-y-scroll scroll-hidden">
             {/* alert message */}
             <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
                 {alert && alert.message && (
@@ -116,7 +115,7 @@ const Signup = ({ onClose, switchToLogin }) => {
             </div>
 
             <Link to={"/"} >
-                <button onClick={onClose} className="absolute cursor-pointer top-3 right-3 text-gray-500 hover:text-gray-800">
+                <button onClick={()=> onClose("/")} className="absolute cursor-pointer top-3 right-3 text-gray-500 hover:text-gray-800">
                     <IoClose size={24} />
                 </button>
             </Link>
