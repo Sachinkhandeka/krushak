@@ -49,7 +49,7 @@ const ToggleFavorite = ({ itemId, isInitiallyFavorite, setAlert }) => {
 
     return (
         <motion.button
-            className="absolute top-3 right-3 z-20 cursor-pointer"
+            className="absolute top-3 left-3 z-20 cursor-pointer"
             whileTap={{ scale: 0.8 }}
             whileHover={{ scale: 1.2 }}
             onClick={handleFavoriteToggle}
