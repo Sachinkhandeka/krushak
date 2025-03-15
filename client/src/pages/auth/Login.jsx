@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async"; // Import Helmet for SEO
 import { IoClose } from "react-icons/io5";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
@@ -16,6 +16,9 @@ const Login = ({ onClose, switchToSignup }) => {
     const [alert, setAlert] = useState({ type: "", message: "" });
     const [formData, setFormData] = useState({ emailOrUsernameOrPhone: "", password: "" });
 
+    useEffect(() => {
+        dispatch(signinFailure(null)); // Reset any previous error and loading state
+    }, []);
     const { loading } = useSelector(state => state.user);
 
     const handleChange = (e) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +12,6 @@ const SignupWithGoogle = React.lazy(()=> import("./SignupWithGoogle"));
 
 const Signup = ({ onClose, switchToLogin }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [viewPass, setViewPass] = useState(false);
     const [viewConfirmPass, setViewConfirmPass] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,6 +26,10 @@ const Signup = ({ onClose, switchToLogin }) => {
     });
 
     const { loading } = useSelector(state => state.user);
+
+    useEffect(() => {
+        dispatch(signinFailure(null)); // Reset any previous error and loading state
+    }, []);
 
     const handleChange = (e) => {
         setFormData({
