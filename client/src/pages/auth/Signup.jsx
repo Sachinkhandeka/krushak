@@ -106,7 +106,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                 content="https://res.cloudinary.com/dg840otuv/image/upload/v1741839605/krushak_logo_zllvhe.png"
             />
         </Helmet>
-        <div className="relative bg-white text-black w-full max-w-md mx-4 p-6 rounded-lg shadow-lg sm:max-w-md md:max-w-xl max-h-[85%] overflow-y-scroll scroll-hidden">
+        <div className="relative bg-white dark:bg-gray-900 text-black dark:text-white w-full max-w-md mx-4 p-6 rounded-lg shadow-lg sm:max-w-md md:max-w-xl max-h-[85%] overflow-y-scroll scroll-hidden">
             {/* alert message */}
             <div className="fixed top-14 right-4 z-50 w-[70%] max-w-sm">
                 {alert && alert.message && (
@@ -120,7 +120,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                 </button>
             </Link>
 
-            <h2 className="text-2xl font-bold text-center text-gray-800">Join Krushak 🌾</h2>
+            <h2 className="text-2xl font-bold text-center bg-white dark:bg-gray-900 text-black dark:text-white">Join Krushak 🌾</h2>
             <p className="text-gray-500 text-center text-sm mt-1">Create your account</p>
 
             <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
@@ -130,7 +130,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                         <input 
                             type="text" 
                             placeholder="Full Name" 
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            className="w-full px-4 py-2 border bg-white dark:bg-gray-900 text-black dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             id="displayName" 
                             required
                             value={formData.displayName} onChange={handleChange}
@@ -141,7 +141,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                         <input 
                             type="text" 
                             placeholder="Username" 
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-900 text-black dark:text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             id="username" 
                             required
                             value={formData.username} onChange={handleChange}/>
@@ -153,7 +153,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                         <input 
                             type="email" 
                             placeholder="Email" 
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-900 text-black dark:text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             id="email" 
                             required
                             value={formData.email} onChange={handleChange}/>
@@ -163,7 +163,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                         <input 
                             type="text" 
                             placeholder="Phone Number" 
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-900 text-black dark:text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             id="phone" 
                             required
                             value={formData.phone} 
@@ -176,7 +176,15 @@ const Signup = ({ onClose, switchToLogin }) => {
                         {/* Password Input */}
                         <label htmlFor="password" className="text-xs mb-1 font-bold" >Password</label>
                         <div className="relative">
-                            <input type={viewPass ? "text" : "password"} placeholder="Password" className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="password" required value={formData.password} onChange={handleChange} />
+                            <input 
+                                type={viewPass ? "text" : "password"} 
+                                placeholder="Password" 
+                                className="w-full px-4 py-2 bg-white dark:bg-gray-900 text-black dark:text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                id="password" 
+                                required 
+                                value={formData.password} 
+                                onChange={handleChange} 
+                            />
                             <button type="button" className="absolute inset-y-0 right-4 flex items-center text-gray-500" onClick={() => setViewPass(!viewPass)}>
                                 {viewPass ? <FaRegEyeSlash /> : <FaRegEye />}
                             </button>
@@ -189,7 +197,7 @@ const Signup = ({ onClose, switchToLogin }) => {
                             <input 
                                 type={viewConfirmPass ? "text" : "password"} 
                                 placeholder="Confirm Password" 
-                                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                className="w-full px-4 py-2 bg-white dark:bg-gray-900 text-black dark:text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
                                 id="confirmPassword" 
                                 required 
                                 value={formData.confirmPassword} 
@@ -199,10 +207,6 @@ const Signup = ({ onClose, switchToLogin }) => {
                             </button>
                         </div>
                     </div>
-                </div>
-
-                <div className="flex items-end justify-end text-xs" >
-                    <a href="/forgot-password" className="hover:underline hover:text-blue-600">Forgot Password</a>
                 </div>
 
                 <button 
