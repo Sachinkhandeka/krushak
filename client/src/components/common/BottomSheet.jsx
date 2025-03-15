@@ -87,6 +87,10 @@ const BottomSheet = ({ equipmentResults, setAlert }) => {
                 <div className="w-12 h-1.5 bg-gray-400 rounded-full"></div>
             </div>
 
+            {/* Showing matched equipment list count */}
+            <span className="text-xl font-semibold my-3 text-center" >
+                {equipmentResults.length} {equipmentResults.length === 1 ? "Equipment" : "Equipments"}
+            </span>
             {/* Equipment List - Ensuring it takes full remaining height */}
             <div className="flex-1 flex flex-col overflow-hidden scroll-hidden min-h-screen bg-white dark:bg-gray-800">
                 {/* Ensure the list fills the remaining space */}

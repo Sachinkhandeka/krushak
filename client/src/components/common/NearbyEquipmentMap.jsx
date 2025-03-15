@@ -15,7 +15,7 @@ const NearbyEquipmentMap = ({ userSearchedLocation, nearByEquipments }) => {
             zoom: 8
         });
 
-        // 📍 User's Location Marker
+        //  User's Location Marker
         if (userSearchedLocation) {
             new mapboxgl.Marker({ color: "green" })
                 .setLngLat(userSearchedLocation.coordinates)
@@ -31,24 +31,20 @@ const NearbyEquipmentMap = ({ userSearchedLocation, nearByEquipments }) => {
                     <div>
                         <strong>${label}</strong><br/>
                         <small>Owner: ${ownerName}</small>
+                        <a href="/equipment/${id}" class="text-blue-600 font-semibold underline mt-2 block">
+                            Show Equipment Details
+                        </a>
                     </div>
                 </div>
             `;
 
             const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent);
 
-            // ✅ Attach popup directly to marker
+            //  Attach popup directly to marker
             const marker = new mapboxgl.Marker()
                 .setLngLat(coordinates)
-                .setPopup(popup) // 🎯 Fix: Attach popup directly
+                .setPopup(popup) // Attach popup directly
                 .addTo(map);
-
-            // 🔗 Click event to navigate to equipment details
-            marker.getElement().addEventListener("click", () => {
-                setTimeout(() => {
-                    window.location.href = `/equipment/${id}`;
-                }, 3000);
-            });
         });
 
         return () => map.remove();
