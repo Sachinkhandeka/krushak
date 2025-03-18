@@ -10,6 +10,6 @@ Krushak is a platform designed to simplify the process of renting and managing f
 - **Frontend**: React, Tailwind CSS
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
-- **Authentication**: JWT and Firebase (for phone verification)
+- **Authentication**: JWT and Firebase (for email verification)
 
 ---

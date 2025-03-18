@@ -46,14 +46,15 @@ const userSchema = new mongoose.Schema({
     },
     recentlyViewedEquipment: [
         {
-            equipmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' },
+            equipmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment', unique: true },
             viewedOn: { type: Date, default: Date.now }
         }
     ],
     favorites: [
         { 
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'Equipment' 
+            ref: 'Equipment',
+            unique: true
         }
     ],
     refreshToken : {

@@ -20,6 +20,7 @@ const MyBookings = React.lazy(()=> import("./pages/MyBookings.jsx"));
 const EditEquipmentDetails = React.lazy(()=> import("./pages/EditEquipmentDetails.jsx"));
 const UserProfile = React.lazy(()=> import("./pages/UserProfile.jsx"));
 const Favorites = React.lazy(()=> import("./pages/Favorites.jsx"));
+const RecentlyViewedEquipment = React.lazy(()=> import("./pages/RecentlyViewedEquipment.jsx"));
 
 const App = () => {
     const { isOpen } = useSelector((state) => state.sidebar);
@@ -162,6 +163,16 @@ const App = () => {
                                 <SuspenseWrapper>
                                     <PrivateRoute>
                                         <Favorites />
+                                    </PrivateRoute>
+                                </SuspenseWrapper>
+                            }
+                        />
+                        <Route
+                            path="/:id/recently-viewed-equipments"
+                            element={
+                                <SuspenseWrapper>
+                                    <PrivateRoute>
+                                        <RecentlyViewedEquipment />
                                     </PrivateRoute>
                                 </SuspenseWrapper>
                             }

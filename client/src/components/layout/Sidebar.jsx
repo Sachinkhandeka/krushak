@@ -17,7 +17,7 @@ export default function Sidebar() {
         currUser?.role === "EquipmentOwner" && { name: "My Equipments", path: `${currUser._id}/my-equipments`, icon: <FaTractor /> },
         currUser?._id && { name: "My Bookings", path: `/${currUser._id}/my-bookings`, icon: <FaClipboardList /> },
         currUser?._id && { name: "Favorites", path: `/${currUser._id}/favorites`, icon: <GrFavorite /> },
-        currUser?._id && { name: "Recently Viewed", path: "/recently-viewed-items", icon: <MdViewInAr /> },
+        currUser?._id && { name: "Recently Viewed", path: `/${currUser._id}/recently-viewed-equipments`, icon: <MdViewInAr /> },
         currUser?._id && { name: "Profile", path: `/profile/${currUser._id}`, icon: <FaUserCircle /> },
     ].filter(Boolean);
 

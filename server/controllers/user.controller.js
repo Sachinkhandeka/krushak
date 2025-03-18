@@ -634,41 +634,68 @@ exports.getFavoriteEquipments = async (req, res, next) => {
 // Update Recently Viewed Equipment
 module.exports.updateRecentlyViewedEquipment = async (req, res) => {
     const { id, equipmentId } = req.params;
-
-    try {
-        // Find user
-        const user = await User.findById(id);
-        if (!user) {
-            throw new ApiError(404, "User not found");
-        }
-
-        // Find if the equipment is already in recently viewed
-        const existingIndex = user.recentlyViewedEquipment.findIndex(
-            (item) => item.equipmentId.toString() === equipmentId
-        );
-
-        if (existingIndex !== -1) {
-            // If found, update the timestamp
-            user.recentlyViewedEquipment[existingIndex].viewedOn = new Date();
-        } else {
-            // Otherwise, add to the list
-            user.recentlyViewedEquipment.push({
-                equipmentId,
-                viewedOn: new Date(),
-            });
-
-            // Keep only the last 10 items
-            if (user.recentlyViewedEquipment.length > 10) {
-                user.recentlyViewedEquipment.shift(); // Remove the oldest entry
-            }
-        }
-
-        await user.save();
-
-        return res.status(200).json(
-            new ApiResponse(200, user.recentlyViewedEquipment, "Recently viewed equipment updated.")
-        );
-    } catch (error) {
-        throw new ApiError(500, "Something went wrong while updating recently viewed equipment");
+    // Find user
+    const user = await User.findById(id);
+    if (!user) {
+        throw new ApiError(404, "User not found");
     }
+
+    // Find if the equipment is already in recently viewed
+    const existingEquipment = user.recentlyViewedEquipment.find(
+        (item) => item.equipmentId.toString() === equipmentId
+    );
+
+    if (existingEquipment) {
+        // If found, update the timestamp
+        existingEquipment.viewedOn = new Date();
+    } else {
+        // Otherwise, add to the list and ensure it's unique
+        user.recentlyViewedEquipment = [
+            { equipmentId, viewedOn: new Date() },
+            ...user.recentlyViewedEquipment.filter(
+                (item) => item.equipmentId.toString() !== equipmentId
+            )
+        ];
+
+        // Keep only the last 10 items
+        if (user.recentlyViewedEquipment.length > 10) {
+            user.recentlyViewedEquipment.pop(); // Remove the oldest entry
+        }
+    }
+
+    await user.save();
+
+    return res.status(200).json(
+        new ApiResponse(200, user.recentlyViewedEquipment, "Recently viewed equipment updated.")
+    );
 };
+
+// Get Recently Viewed Equipment
+module.exports.getRecentlyViewedEquipment = async ( req, res )=> {
+    const { id } = req.params ; 
+
+    if(!id) {
+        throw new ApiError(404, "Unauthorized user request");
+    }
+
+    const recentlyViewedEquipment = await User.findById(id)
+    .select("displayName recentlyViewedEquipment")
+    .populate({
+        path: "recentlyViewedEquipment.equipmentId",
+        select: "model year name images video category type condition pricing availabilityArea.district availabilityArea.state owner",
+        populate: {
+            path: "owner",
+            select: "displayName avatar"
+        }
+    });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            recentlyViewedEquipment,
+            "Recently Viewed Equipment found successfully."
+        )
+    );
+
+
+}

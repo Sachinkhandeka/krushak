@@ -113,6 +113,13 @@ router.put(
     wrapAsync(user.updateRecentlyViewedEquipment),
 );
 
+// get recently viewed equipments
+router.get(
+    "/:id/recently-viewed-equipment",
+    verifyJwt,
+    wrapAsync(user.getRecentlyViewedEquipment),
+);
+
 // Delete user account
 router.delete(
     "/profile/:id",

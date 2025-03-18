@@ -55,7 +55,8 @@ router.delete(
     wrapAsync(equipment.deleteEquipmentListing),
 );
 
-// filter all equipment listings by crop
+
+// filter all equipment listings 
 router.get(
     "/filter",
     wrapAsync(equipment.filterEquipment),

@@ -5,6 +5,7 @@ import { fetchWithAuth } from "../utilityFunction";
 import { RiUserLocationLine } from "react-icons/ri";
 import Alert from "../components/utils/Alert";
 import { Helmet } from "react-helmet-async";
+import { useSelector } from "react-redux";
 
 const EquipmentGallery = React.lazy(()=> import("../components/equipment/EquipmentGallery"));
 const EquipmentInfo = React.lazy(()=> import("../components/equipment/EquipmentInfo"));
@@ -12,11 +13,41 @@ const EquipmentLocation = React.lazy(()=> import("../components/equipment/Equipm
 const MapComponent = React.lazy(()=> import("../components/common/MapComponent"));
 
 const EquipmentDetail = () => {
+    const { currUser } = useSelector( state => state.user );
     const navigate = useNavigate();
     const { id } = useParams();
     const [equipment, setEquipment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [alert, setAlert] = useState({ type: "", message: "" });
+
+    const addEquipmentAsRecentlyViewed = async ()=> {
+        if (!currUser?._id || !id) return; 
+        try {
+            const response = await fetchWithAuth(
+                `/api/v1/users/${currUser._id}/recently-viewed/${id}`,
+                { method : "PUT" },
+                setLoading,
+                setAlert,
+                navigate
+            );
+
+            if(response) {
+                setLoading(false);
+            }
+            
+        } catch (error) {
+            console.error("Error in addEquipmentAsRecentlyViewed:", error.message);
+            setLoading(false);
+            setAlert({ type : "error", message : error.message });
+        }
+    }
+
+
+    useEffect(() => {
+        if (currUser?._id) {
+            addEquipmentAsRecentlyViewed();
+        }
+    }, [currUser?._id]);
 
     const getEquipment = async () => {
         try {
