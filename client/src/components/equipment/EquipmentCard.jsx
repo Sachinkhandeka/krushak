@@ -6,6 +6,7 @@ import ToggleFavorite from "../common/ToggleFavorite";
 import { PiUserLight } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { fetchWithAuth } from "../../utilityFunction";
+import { CiImageOn } from "react-icons/ci";
 
 const EquipmentCard = ({ item, setAlert }) => {
     const { currUser } = useSelector( state => state.user );
@@ -80,20 +81,26 @@ const EquipmentCard = ({ item, setAlert }) => {
                     isInitiallyFavorite={isFavorite}
                     setAlert={setAlert} 
                 />
-                {preview && preview.includes(".mp4") ? (
-                    <video 
-                        controls 
-                        src={preview} 
-                        className="w-full h-full object-cover"
-                        onClick={(e) => e.stopPropagation()} 
-                    ></video>
+                {preview ? (
+                    preview.includes(".mp4") ? (
+                        <video 
+                            controls 
+                            src={preview} 
+                            className="w-full h-full object-cover"
+                            onClick={(e) => e.stopPropagation()} 
+                        ></video>
+                    ) : (
+                        <img 
+                            src={preview} 
+                            alt={item.name} 
+                            className="w-full h-full object-cover" 
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    )
                 ) : (
-                    <img 
-                        src={preview} 
-                        alt={item.name} 
-                        className="w-full h-full object-cover" 
-                        onClick={(e) => e.stopPropagation()}
-                    />
+                    <div className="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400">
+                        <CiImageOn  className="text-4xl" />
+                    </div>
                 )}
             </div>
 

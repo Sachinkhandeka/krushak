@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
+const Equipment = require("./equipment");
+const Booking = require("./booking");
 
 const userSchema = new mongoose.Schema({
     displayName : {
@@ -62,7 +64,7 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps : true });
 
-//function to hash password before saving into DB
+//middleware to hash password before saving into DB
 userSchema.pre("save", async function (next) {
     if(this.isModified("password")) {
         this.password = await bcryptjs.hash(this.password , 10);
@@ -70,6 +72,26 @@ userSchema.pre("save", async function (next) {
     }
     next();
 });
+
+//middleware to delete equipments and bookings if user is deleted
+userSchema.post("findOneAndDelete", async function (doc) {
+    if (!doc) return;
+
+    try {
+        // Delete all equipments owned by the user
+        await Equipment.deleteMany({ owner: doc._id });
+
+        // Delete all bookings where the user is either renter or owner
+        await Booking.deleteMany({
+            $or: [{ user: doc._id }, { owner: doc._id }]
+        });
+
+        console.log(`Deleted all related equipment and bookings for user: ${doc._id}`);
+    } catch (error) {
+        console.error("Error deleting related data:", error);
+    }
+});
+
 
 //method to check if password is correct or not
 userSchema.methods.isPasswordCorrect = async function (password) {
