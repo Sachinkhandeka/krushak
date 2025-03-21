@@ -15,16 +15,32 @@ const NearbyEquipmentMap = ({ userSearchedLocation, nearByEquipments }) => {
             zoom: 8
         });
 
-        //  User's Location Marker
+        // User's Location Marker
         if (userSearchedLocation) {
             new mapboxgl.Marker({ color: "green" })
                 .setLngLat(userSearchedLocation.coordinates)
-                .setPopup(new mapboxgl.Popup().setText("You")) // ✅ Attach popup directly
+                .setPopup(new mapboxgl.Popup().setText("You")) 
                 .addTo(map);
         }
 
-        // 🔹 Nearby Equipment Markers
+        // 🔹 Handle overlapping markers
+        const markerCounts = {};
+
         nearByEquipments.forEach(({ id, coordinates, label, ownerAvatar, ownerName }) => {
+            if (!coordinates || coordinates.length !== 2) return;
+
+            const key = coordinates.join(",");
+            if (!markerCounts[key]) {
+                markerCounts[key] = 0;
+            }
+            const count = markerCounts[key]++;
+            
+            // Offset formula: shift markers slightly based on count
+            const offsetLng = (count % 2 === 0 ? 0.0001 : -0.0001) * count;
+            const offsetLat = (count % 2 === 0 ? 0.0001 : -0.0001) * count;
+
+            const adjustedCoordinates = [coordinates[0] + offsetLng, coordinates[1] + offsetLat];
+
             const popupContent = `
                 <div class="flex items-center gap-2">
                     ${ownerAvatar ? `<img src="${ownerAvatar}" class="w-8 h-8 rounded-full" alt="${ownerName}" />` : ""}
@@ -40,10 +56,9 @@ const NearbyEquipmentMap = ({ userSearchedLocation, nearByEquipments }) => {
 
             const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent);
 
-            //  Attach popup directly to marker
-            const marker = new mapboxgl.Marker()
-                .setLngLat(coordinates)
-                .setPopup(popup) // Attach popup directly
+            new mapboxgl.Marker()
+                .setLngLat(adjustedCoordinates) // Apply offset to fix overlap
+                .setPopup(popup) 
                 .addTo(map);
         });
 
