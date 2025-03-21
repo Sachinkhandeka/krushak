@@ -104,6 +104,8 @@ module.exports.registerUser = async ( req , res )=> {
     const options = {
         httpOnly : true,
         secure : true,
+        sameSite: "Strict",
+        maxAge: 15 * 24 * 60 * 60 * 1000,
     }
 
     return res.status(201)
@@ -153,6 +155,8 @@ module.exports.loginUser = async ( req , res )=> {
     const options = {
         httpOnly : true,
         secure : true,
+        sameSite: "Strict",
+        maxAge: 15 * 24 * 60 * 60 * 1000,
     }
 
     return res.status(200)
@@ -193,6 +197,8 @@ module.exports.logoutUser = async ( req, res )=> {
     const options = {
         httpOnly : true,
         secure : true,
+        sameSite: "Strict",
+        maxAge: 15 * 24 * 60 * 60 * 1000,
     }
 
     res.status(200)
@@ -207,7 +213,7 @@ module.exports.refreshAccessToken = async ( req, res )=> {
 
     if(!incomingRefreshToken) {
         throw new ApiError(401, "Unauthorized user request");
-    }
+    } 
 
     try {
         const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -226,6 +232,8 @@ module.exports.refreshAccessToken = async ( req, res )=> {
         const options = {
             httpOnly : true,
             secure : true,
+            sameSite: "Strict",
+            maxAge: 15 * 24 * 60 * 60 * 1000,
         }
         // generate new access and refresh tokens
         const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
