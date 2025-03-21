@@ -19,7 +19,7 @@ const OwnerEquipmentCard = ({ item }) => {
         >
             {/*  Preview Section */}
             <div className="w-full h-72 bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                {preview.includes(".mp4") ? (
+                {preview && preview.includes(".mp4") ? (
                     <video 
                         controls 
                         src={preview} 

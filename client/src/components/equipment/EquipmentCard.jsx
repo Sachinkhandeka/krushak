@@ -80,7 +80,7 @@ const EquipmentCard = ({ item, setAlert }) => {
                     isInitiallyFavorite={isFavorite}
                     setAlert={setAlert} 
                 />
-                {preview.includes(".mp4") ? (
+                {preview && preview.includes(".mp4") ? (
                     <video 
                         controls 
                         src={preview} 
