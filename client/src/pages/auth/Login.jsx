@@ -53,7 +53,7 @@ const Login = ({ onClose, switchToSignup }) => {
             setAlert({ type: "success", message: result.message });
             setTimeout(() => {
                 onClose("/");
-            }, 4000);
+            }, 200);
         } catch (err) {
             dispatch(signinFailure(err.message));
             setAlert({ type: "error", message: err.message });

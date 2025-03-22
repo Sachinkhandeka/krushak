@@ -48,7 +48,7 @@ const LoginWithGoogle = ({ setAlert, onClose }) => {
                 setAlert({ type : "success", message : data.message });
                 setTimeout(() => {
                     onClose("/");
-                }, 4000);            
+                }, 200);            
             } catch (err) {
                 let errorMessage = err.message;
 

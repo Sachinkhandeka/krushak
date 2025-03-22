@@ -91,7 +91,7 @@ const SignupWithGoogle = ({ setAlert, onClose }) => {
 
             setTimeout(() => {
                 onClose("/");
-            }, 4000);
+            }, 200);
     
         } catch (error) {
             dispatch(signinFailure(error.message));

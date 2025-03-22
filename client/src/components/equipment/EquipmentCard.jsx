@@ -11,7 +11,7 @@ import { CiImageOn } from "react-icons/ci";
 const EquipmentCard = ({ item, setAlert }) => {
     const { currUser } = useSelector( state => state.user );
     const navigate = useNavigate();
-    const [preview, setPreview] = useState(item.video || item.images[0]); 
+    const [preview, setPreview] = useState(item.video || (item.images && item.images?.length > 0 ? item.images[0] : null)); 
     const [showAvailability, setShowAvailability] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showBookingModal, setShowBookingModal] = useState(false);
