@@ -121,13 +121,13 @@ const SearchBar = ({ setEquipmentResults, setMapData, setAlert }) => {
             }`}
         >
             <div
-                className={`flex items-center bg-white dark:bg-gray-900 shadow-md rounded-full px-4 py-2 border-2 transition-all duration-300 ${
+                className={`flex items-center bg-white dark:bg-gray-900 shadow-md rounded-full px-4 py-4 border-2 transition-all duration-300 ${
                     isFocused
                         ? "border-green-500 ring-2 ring-green-300 dark:ring-green-600"
                         : "border-gray-300 dark:border-gray-700"
                 }`}
             >
-                <FaSearch className="text-green-500 dark:text-green-400" />
+                <FaSearch className="text-green-500 text-xl dark:text-green-400" />
                 <input
                     type="text"
                     value={searchQuery}
