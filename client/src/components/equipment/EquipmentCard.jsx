@@ -60,7 +60,7 @@ const EquipmentCard = ({ item, setAlert }) => {
             {/*  Availability Indicator */}
             {item.availability && (
                 <div 
-                    className="absolute top-3 right-3 w-4 h-4 bg-green-500 rounded-full animate-ping cursor-pointer"
+                    className="absolute top-3 right-3 w-3 h-3 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]"
                     onMouseEnter={() => setShowAvailability(true)} 
                     onMouseLeave={() => setShowAvailability(false)}
                     onClick={(e) => e.stopPropagation()}
@@ -93,7 +93,7 @@ const EquipmentCard = ({ item, setAlert }) => {
                         <img 
                             src={preview} 
                             alt={item.name} 
-                            className="w-full h-full object-cover" 
+                            className="w-full h-full object-fill rounded-md" 
                             onClick={(e) => e.stopPropagation()}
                         />
                     )
